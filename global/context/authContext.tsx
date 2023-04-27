@@ -1,9 +1,4 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useReducer,
-} from "react";
+import { ReactNode, createContext, useContext, useReducer } from "react";
 
 enum AuthActionType {
   RESTORE_TOKEN = "RESTORE_TOKEN",
@@ -71,22 +66,28 @@ function authContextReducer(
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authContextReducer, initialAuthState);
 
+  const login = async (data: any) => {
+    // TODO: Login API call
+    dispatch({ type: AuthActionType.LOGIN, token: `${data}-dummy-auth-token` });
+  };
+
+  const signUp = async (data: any) => {
+    // TODO: Sign Up API call
+    dispatch({
+      type: AuthActionType.LOGIN,
+      token: `${data}-dummy-auth-token`,
+    });
+  };
+
+  const logout = () => dispatch({ type: AuthActionType.LOGOUT, token: null });
+
   const authContextProviderValues = {
     userToken: state.userToken,
     isLoading: false,
     isLogout: false,
-    login: async (data: any) => {
-      // TODO: Login API call
-      dispatch({ type: AuthActionType.LOGIN, token: "login-dummy-auth-token" });
-    },
-    logout: () => dispatch({ type: AuthActionType.LOGOUT, token: null }),
-    signUp: async (data: any) => {
-      // TODO: Sign Up API call
-      dispatch({
-        type: AuthActionType.LOGIN,
-        token: "signup-dummy-auth-token",
-      });
-    },
+    login,
+    logout,
+    signUp,
   };
 
   return (

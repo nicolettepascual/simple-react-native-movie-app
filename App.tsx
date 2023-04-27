@@ -8,32 +8,41 @@ import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
 
 import { getIsSignedIn } from "./utils/authentication";
-import { AuthContextProvider } from "./global/context/authContext";
+import {
+  AuthContextProvider,
+  useAuthContext,
+} from "./global/context/authContext";
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  const isSignedIn = getIsSignedIn();
-
   return (
     <AuthContextProvider>
       <NavigationContainer>
-        <Stack.Navigator>
-          {isSignedIn ? (
-            <>
-              <Stack.Screen name="Home" component={HomeScreen} />
-              <Stack.Screen name="Profile" component={ProfileScreen} />
-              <Stack.Screen name="Settings" component={SettingsScreen} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="LogIn" component={LoginScreen} />
-              <Stack.Screen name="SignUp" component={SignUpScreen} />
-            </>
-          )}
-        </Stack.Navigator>
+        <AppComponent />
       </NavigationContainer>
     </AuthContextProvider>
+  );
+}
+
+function AppComponent() {
+  const { userToken } = useAuthContext();
+  const isSignedIn = userToken !== null;
+  return (
+    <Stack.Navigator>
+      {isSignedIn ? (
+        <>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="LogIn" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+        </>
+      )}
+    </Stack.Navigator>
   );
 }
 

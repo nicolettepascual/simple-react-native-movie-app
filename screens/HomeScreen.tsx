@@ -6,18 +6,12 @@ import { Asset } from "expo-asset";
 import { useAuthContext } from "../global/context/authContext";
 
 export function HomeScreen() {
-  const { userToken, login, signUp, logout } = useAuthContext();
+  const { userToken, logout } = useAuthContext();
   return (
-    <View>
+    <View style={globalStyles.container}>
       {userToken && <Text>{userToken}</Text>}
-      <TouchableOpacity onPress={login}>
-        <Text>Login</Text>
-      </TouchableOpacity>
       <TouchableOpacity onPress={logout}>
         <Text>Logout</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={signUp}>
-        <Text>SignUp</Text>
       </TouchableOpacity>
     </View>
   );
