@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useContext, useReducer } from "react";
+import request from "../../api/api";
 
 enum AuthActionType {
   RESTORE_TOKEN = "RESTORE_TOKEN",
@@ -68,7 +69,17 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (data: any) => {
     // TODO: Login API call
-    dispatch({ type: AuthActionType.LOGIN, token: `${data}-dummy-auth-token` });
+    const res: LoginApiResponse = await request(`authentication/token/new`);
+    try {
+      // const responseObj: LoginApiResponse = JSON.parse(res);
+      console.log(res.request_token);
+    } catch (e) {
+      console.error(e);
+    }
+    dispatch({
+      type: AuthActionType.LOGIN,
+      token: `${res.request_token}`,
+    });
   };
 
   const signUp = async (data: any) => {
