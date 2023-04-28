@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useContext, useReducer } from "react";
-import request from "../../api/api";
+import { request } from "../../api/api";
+import { endpoints } from "../../utils/endpoints";
 
 enum AuthActionType {
   RESTORE_TOKEN = "RESTORE_TOKEN",
@@ -10,10 +11,12 @@ enum AuthActionType {
 type AuthContextAction = {
   type: AuthActionType;
   token: string | null;
+  sessionId: string | null;
 };
 
 interface AuthContextValues {
   userToken: string | null;
+  sessionId: string | null;
   isLoading: boolean;
   isLogout: boolean;
 }
@@ -26,6 +29,7 @@ interface AuthContextState extends AuthContextValues {
 
 const initialAuthState = {
   userToken: null,
+  sessionId: null,
   isLoading: false,
   isLogout: false,
   login: async (data: any) => {},
@@ -45,6 +49,7 @@ function authContextReducer(
         ...state,
         isLogout: false,
         userToken: action.token,
+        sessionId: action.sessionId,
       };
     case AuthActionType.LOGOUT:
       return { ...state, isLogout: true, userToken: null };
@@ -68,18 +73,40 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authContextReducer, initialAuthState);
 
   const login = async (data: any) => {
-    // TODO: Login API call
-    const res: LoginApiResponse = await request(`authentication/token/new`);
     try {
-      // const responseObj: LoginApiResponse = JSON.parse(res);
-      console.log(res.request_token);
+      // Step 1: Create a request token
+      const resForReqToken: LoginApiResponse = await request(
+        endpoints.authentication.tokenNew
+      );
+
+      // Step 2: Ask the user for permission
+      // validate fetched request token
+      const resForSessionId: LoginApiResponse = await request(
+        endpoints.authentication.tokenValidateWithLogin,
+        {
+          username: data.username,
+          password: data.password,
+          request_token: resForReqToken.request_token,
+        },
+        "POST"
+      );
+
+      // Step 3: Create a session ID
+      const resSessionId: SessionApiResponse = await request(
+        endpoints.authentication.sessionNew,
+        {
+          request_token: resForSessionId.request_token,
+        },
+        "POST"
+      );
+      dispatch({
+        type: AuthActionType.LOGIN,
+        token: `${resForReqToken.request_token}`,
+        sessionId: `${resSessionId.session_id}`,
+      });
     } catch (e) {
       console.error(e);
     }
-    dispatch({
-      type: AuthActionType.LOGIN,
-      token: `${res.request_token}`,
-    });
   };
 
   const signUp = async (data: any) => {
@@ -87,13 +114,16 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     dispatch({
       type: AuthActionType.LOGIN,
       token: `${data}-dummy-auth-token`,
+      sessionId: null,
     });
   };
 
-  const logout = () => dispatch({ type: AuthActionType.LOGOUT, token: null });
+  const logout = () =>
+    dispatch({ type: AuthActionType.LOGOUT, token: null, sessionId: null });
 
   const authContextProviderValues = {
     userToken: state.userToken,
+    sessionId: state.sessionId,
     isLoading: false,
     isLogout: false,
     login,

@@ -1,10 +1,10 @@
-const api = "https://api.themoviedb.org/3";
-
-// The api key is ok to be exposed, it's free and only for self study. I know that the corretly way is to store in a .env file.
-const key = "024d69b581633d457ac58359146c43f6";
+// FIXME: I know the following variables should be stored in a .env file.
+// The API key is ok to be exposed for now as it's free and also only for testing/self study.
+const API_URL = "https://api.themoviedb.org/3";
+const API_KEY = "024d69b581633d457ac58359146c43f6";
 
 const defaultContent = {
-  api_key: key,
+  api_key: API_KEY,
   language: "en-US",
 };
 
@@ -21,7 +21,7 @@ async function handleApiResponse<T>(response: Response): Promise<T> {
     if (response.ok) {
       return data as T;
     } else {
-      throw new Error(data.message || "Something went wrong");
+      throw new Error(data.message || data.status_message || "Something went wrong");
     }
   } else {
     const text = await response.text();
@@ -33,13 +33,33 @@ async function handleApiResponse<T>(response: Response): Promise<T> {
   }
 }
 
-export default async function request<T>(
+export async function request<T>(
   url: string,
   content = {},
+  method = "GET",
+  sessionId?: string
 ): Promise<T> {
   const obj = { ...defaultContent, ...content };
 
-  const response = await fetch(`${api}/${url}?${queryString(obj)}`);
+  const requestOptions: any = {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  if (sessionId !== undefined) {
+    requestOptions.headers.Authorization = `Bearer ${sessionId}`;
+  }
+
+  if (method === "POST" || method === "PUT" || method === "DELETE") {
+    requestOptions.body = JSON.stringify(obj);
+  }
+
+  const response = await fetch(
+    `${API_URL}/${url}?${queryString(obj)}`,
+    requestOptions
+  );
 
   return handleApiResponse<T>(response);
 }
