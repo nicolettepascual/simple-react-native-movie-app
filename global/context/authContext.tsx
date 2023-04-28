@@ -18,12 +18,12 @@ interface AuthContextValues {
   userToken: string | null;
   sessionId: string | null;
   isLoading: boolean;
-  isLogout: boolean;
+  isLoggedIn: boolean;
 }
 
 interface AuthContextState extends AuthContextValues {
   login: (data: any) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   signUp: (data: any) => Promise<void>;
 }
 
@@ -31,9 +31,9 @@ const initialAuthState = {
   userToken: null,
   sessionId: null,
   isLoading: false,
-  isLogout: false,
+  isLoggedIn: false,
   login: async (data: any) => {},
-  logout: () => {},
+  logout: async () => {},
   signUp: async (data: any) => {},
 };
 
@@ -47,12 +47,12 @@ function authContextReducer(
     case AuthActionType.LOGIN:
       return {
         ...state,
-        isLogout: false,
+        isLoggedIn: true,
         userToken: action.token,
         sessionId: action.sessionId,
       };
     case AuthActionType.LOGOUT:
-      return { ...state, isLogout: true, userToken: null };
+      return { ...state, isLoggedIn: false, userToken: null, sessionId: null };
     case AuthActionType.RESTORE_TOKEN:
       return {
         ...state,
@@ -63,7 +63,7 @@ function authContextReducer(
       return {
         ...state,
         isLoading: true,
-        isLogout: false,
+        isLoggedIn: false,
         userToken: null,
       };
   }
@@ -118,14 +118,27 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const logout = () =>
-    dispatch({ type: AuthActionType.LOGOUT, token: null, sessionId: null });
+  const logout = async () => {
+    try {
+      const res: BaseApiResponse = await request(
+        endpoints.authentication.logout,
+        {
+          session_id: state.sessionId,
+        },
+        "DELETE"
+      );
+      console.log("logout", { res });
+      dispatch({ type: AuthActionType.LOGOUT, token: null, sessionId: null });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const authContextProviderValues = {
     userToken: state.userToken,
     sessionId: state.sessionId,
-    isLoading: false,
-    isLogout: false,
+    isLoading: state.isLoading,
+    isLoggedIn: state.isLoggedIn,
     login,
     logout,
     signUp,

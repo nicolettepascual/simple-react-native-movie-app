@@ -26,11 +26,11 @@ function App() {
 }
 
 function AppComponent() {
-  const { userToken } = useAuthContext();
-  const isSignedIn = userToken !== null;
+  const { isLoggedIn } = useAuthContext();
+
   return (
     <Stack.Navigator>
-      {isSignedIn ? (
+      {isLoggedIn ? (
         <>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
