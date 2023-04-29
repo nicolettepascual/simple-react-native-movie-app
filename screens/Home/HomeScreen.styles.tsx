@@ -25,4 +25,15 @@ export const styles = StyleSheet.create({
     height: height * 0.5,
     aspectRatio: 9 / 16,
   },
+  indicatorWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  indicator: {},
+  indicatorText: {
+    fontSize: 18,
+    marginLeft: 5,
+  },
 });

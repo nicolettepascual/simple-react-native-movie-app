@@ -39,9 +39,12 @@ export async function request<T>(
   url: string,
   content = {},
   method = "GET",
-  sessionId?: string | null
+  sessionId?: string | null,
+  page?: number
 ): Promise<T> {
-  const obj = { ...defaultContent, ...content };
+  const obj = page
+    ? { ...defaultContent, ...content, page }
+    : { ...defaultContent, ...content };
 
   const requestOptions: any = {
     method: method,
@@ -50,13 +53,11 @@ export async function request<T>(
     },
   };
 
-  if (sessionId !== undefined) {
+  if (sessionId !== undefined)
     requestOptions.headers.Authorization = `Bearer ${sessionId}`;
-  }
 
-  if (method === "POST" || method === "PUT" || method === "DELETE") {
+  if (method === "POST" || method === "PUT" || method === "DELETE")
     requestOptions.body = JSON.stringify(obj);
-  }
 
   const response = await fetch(
     `${API_URL}/${url}?${queryString(obj)}`,

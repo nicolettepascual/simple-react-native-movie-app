@@ -5,24 +5,30 @@ import { useAuthContext } from "./authContext";
 
 enum MoviesActionType {
   GET_TRENDING = "GET_TRENDING",
+  SET_CURRENT_PAGE = "SET_CURRENT_PAGE",
 }
 
 type MoviesContextAction = {
   type: MoviesActionType;
   trendingMovies: Movie[];
+  currentPage: number;
 };
 
 interface MoviesContextValues {
-  trendingMovies: Movie[] | null;
+  trendingMovies: Movie[];
+  currentPage: number;
 }
 
 interface MoviesContextState extends MoviesContextValues {
-  getTrendingMovies: () => Promise<void>;
+  getTrendingMovies: (page: number) => Promise<void>;
+  setCurrentPage: (page: number) => void;
 }
 
 const initialMoviesState = {
-  trendingMovies: null,
-  getTrendingMovies: async () => {},
+  trendingMovies: [],
+  currentPage: 1,
+  getTrendingMovies: async (page: number) => {},
+  setCurrentPage: (page: number) => {},
 };
 
 export const MoviesContext =
@@ -37,6 +43,11 @@ function MoviesContextReducer(
       return {
         ...state,
         trendingMovies: action.trendingMovies,
+      };
+    case MoviesActionType.SET_CURRENT_PAGE:
+      return {
+        ...state,
+        currentPage: action.currentPage,
       };
     default:
       return {
@@ -53,13 +64,21 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
 
   const { sessionId } = useAuthContext();
 
-  const getTrendingMovies = async () => {
+  const setCurrentPage = (page: number) =>
+    dispatch({
+      type: MoviesActionType.SET_CURRENT_PAGE,
+      trendingMovies: state.trendingMovies ?? [],
+      currentPage: page,
+    });
+
+  const getTrendingMovies = async (page: number) => {
     try {
       const response: MoviesApiResponse = await request(
         endpoints.movies.trending,
         {},
         "GET",
-        sessionId
+        sessionId,
+        page
       );
 
       const trendingMovies: Movie[] = response.results.map((movie: any) => ({
@@ -78,7 +97,8 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
 
       dispatch({
         type: MoviesActionType.GET_TRENDING,
-        trendingMovies,
+        trendingMovies: [...state.trendingMovies, ...trendingMovies],
+        currentPage: page,
       });
     } catch (e) {
       console.error(e);
@@ -87,6 +107,8 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
 
   const MoviesContextProviderValues = {
     trendingMovies: state.trendingMovies,
+    currentPage: state.currentPage,
+    setCurrentPage,
     getTrendingMovies,
   };
 
