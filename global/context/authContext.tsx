@@ -1,6 +1,18 @@
-import { ReactNode, createContext, useContext, useReducer } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 import { request } from "../../api/api";
 import { endpoints } from "../../utils/endpoints";
+import {
+  SESSION_ID_STORAGE_KEY,
+  getLocalData,
+  removeFromLocalData,
+  storeToLocalData,
+} from "../../utils/storage";
 
 enum AuthActionType {
   RESTORE_TOKEN = "RESTORE_TOKEN",
@@ -56,7 +68,9 @@ function authContextReducer(
     case AuthActionType.RESTORE_TOKEN:
       return {
         ...state,
+        isLoggedIn: true,
         userToken: action.token,
+        sessionId: action.sessionId,
         isLoading: false,
       };
     default:
@@ -99,6 +113,10 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         },
         "POST"
       );
+
+      if (resSessionId.session_id)
+        await storeToLocalData(SESSION_ID_STORAGE_KEY, resSessionId.session_id);
+
       dispatch({
         type: AuthActionType.LOGIN,
         token: `${resForReqToken.request_token}`,
@@ -120,19 +138,35 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
+      const sessionId = await getLocalData(SESSION_ID_STORAGE_KEY);
       const res: BaseApiResponse = await request(
         endpoints.authentication.logout,
         {
-          session_id: state.sessionId,
+          session_id: sessionId,
         },
         "DELETE"
       );
+      await removeFromLocalData(SESSION_ID_STORAGE_KEY);
       console.log("logout", { res });
       dispatch({ type: AuthActionType.LOGOUT, token: null, sessionId: null });
     } catch (e) {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    const onStorageChange = async () => {
+      const sessionId = await getLocalData(SESSION_ID_STORAGE_KEY);
+      if (sessionId && sessionId !== state.sessionId) {
+        dispatch({
+          type: AuthActionType.RESTORE_TOKEN,
+          token: state.userToken,
+          sessionId: sessionId,
+        });
+      }
+    };
+    onStorageChange();
+  }, [state.sessionId, state.userToken]);
 
   const authContextProviderValues = {
     userToken: state.userToken,
