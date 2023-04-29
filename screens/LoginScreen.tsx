@@ -4,8 +4,8 @@ import { useAuthContext } from "../global/context/authContext";
 import { useState } from "react";
 
 export function LoginScreen() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("nicopascual");
+  const [password, setPassword] = useState("TMBD2510");
 
   const { login } = useAuthContext();
 

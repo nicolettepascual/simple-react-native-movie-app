@@ -7,20 +7,22 @@ import { SettingsScreen } from "./screens/SettingsScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
 
-import { getIsSignedIn } from "./utils/authentication";
 import {
   AuthContextProvider,
   useAuthContext,
 } from "./global/context/authContext";
+import { MoviesContextProvider } from "./global/context/moviesContext";
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <AuthContextProvider>
-      <NavigationContainer>
-        <AppComponent />
-      </NavigationContainer>
+      <MoviesContextProvider>
+        <NavigationContainer>
+          <AppComponent />
+        </NavigationContainer>
+      </MoviesContextProvider>
     </AuthContextProvider>
   );
 }
@@ -32,7 +34,11 @@ function AppComponent() {
     <Stack.Navigator>
       {isLoggedIn ? (
         <>
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
         </>

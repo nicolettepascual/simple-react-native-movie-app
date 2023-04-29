@@ -21,7 +21,9 @@ async function handleApiResponse<T>(response: Response): Promise<T> {
     if (response.ok) {
       return data as T;
     } else {
-      throw new Error(data.message || data.status_message || "Something went wrong");
+      throw new Error(
+        data.message || data.status_message || "Something went wrong"
+      );
     }
   } else {
     const text = await response.text();
@@ -37,7 +39,7 @@ export async function request<T>(
   url: string,
   content = {},
   method = "GET",
-  sessionId?: string
+  sessionId?: string | null
 ): Promise<T> {
   const obj = { ...defaultContent, ...content };
 

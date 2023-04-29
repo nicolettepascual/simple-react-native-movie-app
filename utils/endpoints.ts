@@ -5,5 +5,8 @@ export const endpoints = {
     sessionNew: "authentication/session/new",
     logout: "authentication/session",
   },
-  // add more endpoints as needed
+  movies: {
+    trending: "trending/movie/day",
+  },
+  images: "https://image.tmdb.org/t/p/w500/",
 };

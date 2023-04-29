@@ -152,11 +152,11 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const useAuthContext = (): AuthContextState => {
-  const choreMiniGameContext = useContext(AuthContext);
-  if (!choreMiniGameContext) {
+  const choreAuthContext = useContext(AuthContext);
+  if (!choreAuthContext) {
     throw new Error("AuthContext must be used within a AuthContextProvider");
   }
-  return choreMiniGameContext;
+  return choreAuthContext;
 };
 
 export { AuthContextProvider, useAuthContext };
