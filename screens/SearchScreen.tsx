@@ -1,10 +1,10 @@
 import { View, Text } from "react-native";
 import { globalStyles } from "../global/styles";
 
-export function SettingsScreen() {
+export function SearchScreen() {
   return (
     <View style={globalStyles.container}>
-      <Text>Settings Screen</Text>
+      <Text>Search Screen</Text>
     </View>
   );
 }

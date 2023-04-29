@@ -7,13 +7,13 @@ import {
   View,
 } from "react-native";
 import { useEffect } from "react";
-import { useAuthContext } from "../global/context/authContext";
-import { useMoviesContext } from "../global/context/moviesContext";
+import { useAuthContext } from "../../global/context/authContext";
+import { useMoviesContext } from "../../global/context/moviesContext";
 import { styles } from "./HomeScreen.styles";
-import { endpoints } from "../utils/endpoints";
+import { endpoints } from "../../utils/endpoints";
 
 export function HomeScreen() {
-  const { userToken, sessionId, logout } = useAuthContext();
+  const { logout } = useAuthContext();
   const { trendingMovies, getTrendingMovies } = useMoviesContext();
 
   useEffect(() => {
@@ -22,10 +22,6 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <TouchableOpacity style={styles.logout} onPress={logout}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
-
       <View style={styles.flatListView}>
         <FlatList
           style={styles.flatList}

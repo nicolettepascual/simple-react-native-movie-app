@@ -1,11 +1,8 @@
+import * as React from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import { HomeScreen } from "./screens/HomeScreen";
-import { ProfileScreen } from "./screens/ProfileScreen";
-import { SettingsScreen } from "./screens/SettingsScreen";
-import { LoginScreen } from "./screens/LoginScreen";
-import { SignUpScreen } from "./screens/SignUpScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import {
   AuthContextProvider,
@@ -13,9 +10,16 @@ import {
 } from "./global/context/authContext";
 import { MoviesContextProvider } from "./global/context/moviesContext";
 
-const Stack = createNativeStackNavigator();
+import { ProfileScreen } from "./screens/ProfileScreen";
+import { LoginScreen } from "./screens/LoginScreen";
+import { SignUpScreen } from "./screens/SignUpScreen";
+import { HomeScreen } from "./screens/Home/HomeScreen";
+import { SearchScreen } from "./screens/SearchScreen";
 
-function App() {
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const App = () => {
   return (
     <AuthContextProvider>
       <MoviesContextProvider>
@@ -25,7 +29,7 @@ function App() {
       </MoviesContextProvider>
     </AuthContextProvider>
   );
-}
+};
 
 function AppComponent() {
   const { isLoggedIn } = useAuthContext();
@@ -33,15 +37,11 @@ function AppComponent() {
   return (
     <Stack.Navigator>
       {isLoggedIn ? (
-        <>
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-        </>
+        <Stack.Screen
+          name="Main"
+          options={{ headerShown: false }}
+          component={TabNavigator}
+        />
       ) : (
         <>
           <Stack.Screen name="LogIn" component={LoginScreen} />
@@ -49,6 +49,39 @@ function AppComponent() {
         </>
       )}
     </Stack.Navigator>
+  );
+}
+
+function TabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          if (route.name === "Home") {
+            const iconName = focused ? "home-sharp" : "home-outline";
+            return <Ionicons name={iconName} size={size} color={color} />;
+          } else if (route.name === "Profile") {
+            const iconName = focused
+              ? "ios-person-sharp"
+              : "ios-person-outline";
+            return <Ionicons name={iconName} size={size} color={color} />;
+          } else if (route.name === "Search") {
+            const iconName = focused ? "search-sharp" : "search-outline";
+            return <Ionicons name={iconName} size={size} color={color} />;
+          }
+        },
+        tabBarActiveTintColor: "deepskyblue",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
 }
 

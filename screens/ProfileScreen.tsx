@@ -1,10 +1,15 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { globalStyles } from "../global/styles";
+import { useAuthContext } from "../global/context/authContext";
 
 export function ProfileScreen() {
+  const { logout } = useAuthContext();
+
   return (
     <View style={globalStyles.container}>
-      <Text>Profile Screen</Text>
+      <TouchableOpacity onPress={logout}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
