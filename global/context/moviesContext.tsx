@@ -6,29 +6,35 @@ import { useAuthContext } from "./authContext";
 enum MoviesActionType {
   GET_TRENDING = "GET_TRENDING",
   SET_CURRENT_PAGE = "SET_CURRENT_PAGE",
+  GET_MOVIE_DETAILS = "GET_MOVIE_DETAILS",
 }
 
 type MoviesContextAction = {
   type: MoviesActionType;
   trendingMovies: Movie[];
+  movieDetails?: Movie;
   currentPage: number;
 };
 
 interface MoviesContextValues {
   trendingMovies: Movie[];
+  movieDetails?: Movie;
   currentPage: number;
 }
 
 interface MoviesContextState extends MoviesContextValues {
   getTrendingMovies: (page: number) => Promise<void>;
   setCurrentPage: (page: number) => void;
+  getMovieDetails: () => Promise<void>;
 }
 
 const initialMoviesState = {
   trendingMovies: [],
   currentPage: 1,
+  movieDetails: undefined,
   getTrendingMovies: async (page: number) => {},
   setCurrentPage: (page: number) => {},
+  getMovieDetails: async () => {},
 };
 
 export const MoviesContext =
@@ -73,13 +79,11 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
 
   const getTrendingMovies = async (page: number) => {
     try {
-      const response: MoviesApiResponse = await request(
-        endpoints.movies.trending,
-        {},
-        "GET",
+      const response: MoviesApiResponse = await request({
+        url: endpoints.movies.trending,
         sessionId,
-        page
-      );
+        page,
+      });
 
       const trendingMovies: Movie[] = response.results.map((movie: any) => ({
         backdrop_path: movie.backdrop_path,
@@ -105,9 +109,18 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getMovieDetails = async () => {
+    try {
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const MoviesContextProviderValues = {
     trendingMovies: state.trendingMovies,
     currentPage: state.currentPage,
+    movieDetails: state.movieDetails,
+    getMovieDetails,
     setCurrentPage,
     getTrendingMovies,
   };

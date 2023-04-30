@@ -89,30 +89,30 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const login = async (data: any) => {
     try {
       // Step 1: Create a request token
-      const resForReqToken: LoginApiResponse = await request(
-        endpoints.authentication.tokenNew
-      );
+      const resForReqToken: LoginApiResponse = await request({
+        url: endpoints.authentication.tokenNew,
+      });
 
       // Step 2: Ask the user for permission
       // validate fetched request token
-      const resForSessionId: LoginApiResponse = await request(
-        endpoints.authentication.tokenValidateWithLogin,
-        {
+      const resForSessionId: LoginApiResponse = await request({
+        url: endpoints.authentication.tokenValidateWithLogin,
+        content: {
           username: data.username,
           password: data.password,
           request_token: resForReqToken.request_token,
         },
-        "POST"
-      );
+        method: "POST",
+      });
 
       // Step 3: Create a session ID
-      const resSessionId: SessionApiResponse = await request(
-        endpoints.authentication.sessionNew,
-        {
+      const resSessionId: SessionApiResponse = await request({
+        url: endpoints.authentication.sessionNew,
+        content: {
           request_token: resForSessionId.request_token,
         },
-        "POST"
-      );
+        method: "POST",
+      });
 
       if (resSessionId.session_id)
         await storeToLocalData(SESSION_ID_STORAGE_KEY, resSessionId.session_id);
@@ -139,13 +139,13 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       const sessionId = await getLocalData(SESSION_ID_STORAGE_KEY);
-      const res: BaseApiResponse = await request(
-        endpoints.authentication.logout,
-        {
+      const res: BaseApiResponse = await request({
+        url: endpoints.authentication.logout,
+        content: {
           session_id: sessionId,
         },
-        "DELETE"
-      );
+        method: "DELETE",
+      });
       await removeFromLocalData(SESSION_ID_STORAGE_KEY);
       console.log("logout", { res });
       dispatch({ type: AuthActionType.LOGOUT, token: null, sessionId: null });

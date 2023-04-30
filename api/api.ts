@@ -35,15 +35,25 @@ async function handleApiResponse<T>(response: Response): Promise<T> {
   }
 }
 
-export async function request<T>(
-  url: string,
+export type ApiMethod = "GET" | "POST" | "PUT" | "DELETE";
+
+export interface ApiRequest {
+  url: string;
+  content?: object;
+  method?: ApiMethod;
+  sessionId?: string | null;
+  page?: number;
+}
+
+export async function request<T>({
+  url,
   content = {},
   method = "GET",
-  sessionId?: string | null,
-  page?: number
-): Promise<T> {
+  sessionId = undefined,
+  page,
+}: ApiRequest): Promise<T> {
   const obj = page
-    ? { ...defaultContent, ...content, page }
+    ? { ...defaultContent, ...content, page: page }
     : { ...defaultContent, ...content };
 
   const requestOptions: any = {
@@ -53,7 +63,7 @@ export async function request<T>(
     },
   };
 
-  if (sessionId !== undefined)
+  if (sessionId && sessionId !== undefined)
     requestOptions.headers.Authorization = `Bearer ${sessionId}`;
 
   if (method === "POST" || method === "PUT" || method === "DELETE")
