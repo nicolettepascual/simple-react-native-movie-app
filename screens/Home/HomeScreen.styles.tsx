@@ -6,6 +6,8 @@ export const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
+    width: width,
+    height: height,
   },
   flatListView: {
     flex: 1,
@@ -21,8 +23,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignSelf: "center",
-    width: width * 0.2,
-    height: height * 0.5,
+    width: width * 0.1,
+    height: height * 0.4,
     aspectRatio: 9 / 16,
   },
   indicatorWrapper: {

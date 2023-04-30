@@ -1,40 +1,18 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  SafeAreaView,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, SafeAreaView } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useMoviesContext } from "../../global/context/moviesContext";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { styles } from "./HomeScreen.styles";
-import { endpoints } from "../../utils/endpoints";
+import { MovieDetailsScreen } from "../Movie/MovieDetailsScreen";
+import { Footer } from "./components/Footer";
+import { MoviePoster } from "./components/MoviePoster";
 
-function MoviePoster({ item }: { item: Movie }) {
-  return (
-    <Image
-      style={styles.poster}
-      source={{
-        uri: `${endpoints.images}${item.poster_path}`,
-      }}
-    />
-  );
-}
+export type HomeStackParamList = {
+  HomeScreen: undefined;
+  MovieDetails: { movie: Movie };
+};
 
-function Footer({ isLoading }: { isLoading: boolean }) {
-  if (isLoading) {
-    return (
-      <View style={styles.indicatorWrapper}>
-        <ActivityIndicator color={"deepskyblue"} style={styles.indicator} />
-        <Text style={styles.indicatorText}>Loading...</Text>
-      </View>
-    );
-  }
-  return null;
-}
-
-export function HomeScreen() {
+function HomeScreen() {
   const { trendingMovies, currentPage, setCurrentPage, getTrendingMovies } =
     useMoviesContext();
 
@@ -61,8 +39,26 @@ export function HomeScreen() {
         onEndReached={onEndReached}
         ListFooterComponent={<Footer isLoading={isLoading} />}
         removeClippedSubviews={true}
-        renderItem={({ item }) => <MoviePoster item={item} />}
+        renderItem={({ item }) => <MoviePoster movie={item} />}
       />
     </SafeAreaView>
+  );
+}
+
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+export function HomeStackScreen() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="MovieDetails"
+        component={MovieDetailsScreen}
+        options={({ route }) => ({ title: route.params.movie.title })}
+      />
+    </HomeStack.Navigator>
   );
 }

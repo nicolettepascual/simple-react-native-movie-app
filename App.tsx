@@ -13,7 +13,7 @@ import { MoviesContextProvider } from "./global/context/moviesContext";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
-import { HomeScreen } from "./screens/Home/HomeScreen";
+import { HomeStackScreen } from "./screens/Home/HomeScreen";
 import { SearchScreen } from "./screens/SearchScreen";
 
 const Stack = createNativeStackNavigator();
@@ -76,7 +76,7 @@ function TabNavigator() {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStackScreen}
         options={{ headerShown: false }}
       />
       <Tab.Screen name="Search" component={SearchScreen} />
