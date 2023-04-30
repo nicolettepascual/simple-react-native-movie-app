@@ -15,6 +15,7 @@ import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
 import { HomeStackScreen } from "./screens/Home/HomeScreen";
 import { SearchScreen } from "./screens/SearchScreen";
+import { SearchContextProvider } from "./global/context/searchContext";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,9 +24,11 @@ const App = () => {
   return (
     <AuthContextProvider>
       <MoviesContextProvider>
-        <NavigationContainer>
-          <AppComponent />
-        </NavigationContainer>
+        <SearchContextProvider>
+          <NavigationContainer>
+            <AppComponent />
+          </NavigationContainer>
+        </SearchContextProvider>
       </MoviesContextProvider>
     </AuthContextProvider>
   );

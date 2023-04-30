@@ -162,8 +162,8 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
           avatar_path: review.author_details.avatar_path,
         },
         content: review.content,
-        created_at: review.created_at, //"2017-02-13T22:23:01.268Z";
-        updated_at: review.updated_at, //"2017-02-13T23:16:19.538Z";
+        created_at: review.created_at,
+        updated_at: review.updated_at,
         url: review.url,
       }));
 

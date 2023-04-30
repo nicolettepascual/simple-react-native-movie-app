@@ -9,6 +9,7 @@ export const endpoints = {
     trending: "trending/movie/day",
     details: "movie/{movie_id}",
     reviews: "movie/{movie_id}/reviews",
+    search: "search/movie",
   },
   images: "https://image.tmdb.org/t/p/w500/",
 };

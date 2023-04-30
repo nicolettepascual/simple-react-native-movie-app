@@ -34,6 +34,10 @@ interface MoviesApiResponse extends BaseApiResponse {
   results: Movie[];
 }
 
+interface SearchApiResponse extends BaseApiResponse {
+  results: Movie[];
+}
+
 interface ReviewAuthor {
   name: string;
   username: string;
