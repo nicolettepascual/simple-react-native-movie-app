@@ -101,7 +101,7 @@ const SearchContextProvider = ({ children }: { children: ReactNode }) => {
 
       dispatch({
         type: SearchActionType.GET_SEARCH_RESULTS,
-        searchResults: [...state.searchResults, ...searchResults],
+        searchResults: [...searchResults],
         currentPage: page,
       });
     } catch (e) {

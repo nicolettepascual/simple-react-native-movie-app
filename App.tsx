@@ -14,7 +14,7 @@ import { ProfileScreen } from "./screens/ProfileScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
 import { HomeStackScreen } from "./screens/Home/HomeScreen";
-import { SearchScreen } from "./screens/SearchScreen";
+import { SearchScreen } from "./screens/Search/SearchScreen";
 import { SearchContextProvider } from "./global/context/searchContext";
 
 const Stack = createNativeStackNavigator();
@@ -82,7 +82,11 @@ function TabNavigator() {
         component={HomeStackScreen}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{ headerShown: false }}
+      />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
