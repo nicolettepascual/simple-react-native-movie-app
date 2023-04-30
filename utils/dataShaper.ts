@@ -33,3 +33,18 @@ interface Movie {
 interface MoviesApiResponse extends BaseApiResponse {
   results: Movie[];
 }
+
+interface ReviewAuthor {
+  name: string;
+  username: string;
+  avatar_path: string;
+}
+
+interface Review {
+  id: string;
+  author_details: ReviewAuthor;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  url: string;
+}

@@ -73,7 +73,7 @@ export async function request<T>({
 
   let apiUrl = `${API_URL}/${url}?${queryString(obj)}`;
 
-  if (movieId) apiUrl = `${API_URL}/${url}/${movieId}?${queryString(obj)}`;
+  if (movieId) apiUrl = apiUrl.replace("{movie_id}", movieId);
 
   const response = await fetch(`${apiUrl}`, requestOptions);
 

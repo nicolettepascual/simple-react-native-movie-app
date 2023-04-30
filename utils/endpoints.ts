@@ -7,7 +7,8 @@ export const endpoints = {
   },
   movies: {
     trending: "trending/movie/day",
-    details: "movie"
+    details: "movie/{movie_id}",
+    reviews: "movie/{movie_id}/reviews",
   },
   images: "https://image.tmdb.org/t/p/w500/",
 };

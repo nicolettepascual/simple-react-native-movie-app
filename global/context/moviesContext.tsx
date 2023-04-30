@@ -7,34 +7,40 @@ enum MoviesActionType {
   GET_TRENDING = "GET_TRENDING",
   SET_CURRENT_PAGE = "SET_CURRENT_PAGE",
   GET_MOVIE_DETAILS = "GET_MOVIE_DETAILS",
+  GET_MOVIE_REVIEWS = "GET_MOVIE_REVIEWS",
 }
 
 type MoviesContextAction = {
   type: MoviesActionType;
   trendingMovies: Movie[];
-  movieDetails?: Movie;
   currentPage: number;
+  movieDetails?: Movie;
+  movieReviews?: Review[];
 };
 
 interface MoviesContextValues {
   trendingMovies: Movie[];
-  movieDetails?: Movie;
   currentPage: number;
+  movieDetails?: Movie;
+  movieReviews?: Review[];
 }
 
 interface MoviesContextState extends MoviesContextValues {
   getTrendingMovies: (page: number) => Promise<void>;
   setCurrentPage: (page: number) => void;
   getMovieDetails: (movieId: string) => Promise<void>;
+  getMovieReviews: (movieId: string) => Promise<void>;
 }
 
 const initialMoviesState = {
   trendingMovies: [],
   currentPage: 1,
   movieDetails: undefined,
+  movieReviews: [],
   getTrendingMovies: async (page: number) => {},
   setCurrentPage: (page: number) => {},
   getMovieDetails: async (movieId: string) => {},
+  getMovieReviews: async (movieId: string) => {},
 };
 
 export const MoviesContext =
@@ -59,6 +65,11 @@ function MoviesContextReducer(
       return {
         ...state,
         movieDetails: action.movieDetails,
+      };
+    case MoviesActionType.GET_MOVIE_REVIEWS:
+      return {
+        ...state,
+        movieReviews: action.movieReviews,
       };
     default:
       return {
@@ -135,13 +146,48 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getMovieReviews = async (movieId: string) => {
+    try {
+      const response: MoviesApiResponse = await request({
+        url: endpoints.movies.reviews,
+        movieId,
+        sessionId,
+      });
+
+      const movieReviews: Review[] = response.results.map((review: any) => ({
+        id: review.id,
+        author_details: {
+          name: review.author_details.name,
+          username: review.author_details.username,
+          avatar_path: review.author_details.avatar_path,
+        },
+        content: review.content,
+        created_at: review.created_at, //"2017-02-13T22:23:01.268Z";
+        updated_at: review.updated_at, //"2017-02-13T23:16:19.538Z";
+        url: review.url,
+      }));
+
+      dispatch({
+        type: MoviesActionType.GET_MOVIE_REVIEWS,
+        trendingMovies: state.trendingMovies,
+        currentPage: state.currentPage,
+        movieDetails: state.movieDetails,
+        movieReviews: [...movieReviews],
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const MoviesContextProviderValues = {
     trendingMovies: state.trendingMovies,
     currentPage: state.currentPage,
     movieDetails: state.movieDetails,
+    movieReviews: state.movieReviews,
     getMovieDetails,
     setCurrentPage,
     getTrendingMovies,
+    getMovieReviews,
   };
 
   return (
