@@ -25,7 +25,7 @@ interface MoviesContextValues {
 interface MoviesContextState extends MoviesContextValues {
   getTrendingMovies: (page: number) => Promise<void>;
   setCurrentPage: (page: number) => void;
-  getMovieDetails: () => Promise<void>;
+  getMovieDetails: (movieId: string) => Promise<void>;
 }
 
 const initialMoviesState = {
@@ -34,7 +34,7 @@ const initialMoviesState = {
   movieDetails: undefined,
   getTrendingMovies: async (page: number) => {},
   setCurrentPage: (page: number) => {},
-  getMovieDetails: async () => {},
+  getMovieDetails: async (movieId: string) => {},
 };
 
 export const MoviesContext =
@@ -54,6 +54,11 @@ function MoviesContextReducer(
       return {
         ...state,
         currentPage: action.currentPage,
+      };
+    case MoviesActionType.GET_MOVIE_DETAILS:
+      return {
+        ...state,
+        movieDetails: action.movieDetails,
       };
     default:
       return {
@@ -109,8 +114,22 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getMovieDetails = async () => {
+  const getMovieDetails = async (movieId: string) => {
     try {
+      const response: MoviesApiResponse = await request({
+        url: endpoints.movies.details,
+        movieId,
+        sessionId,
+      });
+
+      const movieDetails: Movie = JSON.parse(JSON.stringify(response));
+
+      dispatch({
+        type: MoviesActionType.GET_MOVIE_DETAILS,
+        trendingMovies: state.trendingMovies,
+        currentPage: state.currentPage,
+        movieDetails: movieDetails,
+      });
     } catch (e) {
       console.error(e);
     }

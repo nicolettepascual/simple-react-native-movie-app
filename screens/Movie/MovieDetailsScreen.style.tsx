@@ -3,9 +3,6 @@ import { Dimensions, StatusBar, StyleSheet } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-  padding5: {
-    padding: 5,
-  },
   backdropView: {
     backgroundColor: "black",
   },
@@ -28,6 +25,7 @@ export const styles = StyleSheet.create({
   },
   voteAverageText: {
     color: "white",
+    paddingLeft: 5,
   },
   voteAverageView: {
     paddingTop: 0,
@@ -37,7 +35,17 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   movieDetailsCol: {
-    paddingLeft: 5,
-    paddingRight: 5,
+    paddingRight: 20,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+  },
+  genreCol: {
+    flexShrink: 1,
+    textAlign: "justify",
+  },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

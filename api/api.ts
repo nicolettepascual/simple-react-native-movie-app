@@ -43,6 +43,7 @@ export interface ApiRequest {
   method?: ApiMethod;
   sessionId?: string | null;
   page?: number;
+  movieId?: string | null;
 }
 
 export async function request<T>({
@@ -51,6 +52,7 @@ export async function request<T>({
   method = "GET",
   sessionId = undefined,
   page,
+  movieId,
 }: ApiRequest): Promise<T> {
   const obj = page
     ? { ...defaultContent, ...content, page: page }
@@ -69,10 +71,11 @@ export async function request<T>({
   if (method === "POST" || method === "PUT" || method === "DELETE")
     requestOptions.body = JSON.stringify(obj);
 
-  const response = await fetch(
-    `${API_URL}/${url}?${queryString(obj)}`,
-    requestOptions
-  );
+  let apiUrl = `${API_URL}/${url}?${queryString(obj)}`;
+
+  if (movieId) apiUrl = `${API_URL}/${url}/${movieId}?${queryString(obj)}`;
+
+  const response = await fetch(`${apiUrl}`, requestOptions);
 
   return handleApiResponse<T>(response);
 }
