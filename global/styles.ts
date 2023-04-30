@@ -6,4 +6,11 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  title: {
+    fontSize: 25,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 });
