@@ -11,13 +11,11 @@ import {
 import { styles } from "./AccountScreen.style";
 import { useAuthContext } from "../../global/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useAccountContext } from "../../global/context/accountContext";
 import { getAvatarPath } from "../../utils/global";
 import { globalStyles, paddingStyles } from "../../global/styles";
 
 export function AccountScreen() {
-  const { account, getAccountDetails } = useAccountContext();
-  const { logout } = useAuthContext();
+  const { logout, account, getAccountDetails } = useAuthContext();
 
   const settings = [
     { title: "Ratings", value: ">" },

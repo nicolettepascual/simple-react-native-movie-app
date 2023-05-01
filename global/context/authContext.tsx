@@ -18,17 +18,20 @@ enum AuthActionType {
   RESTORE_TOKEN = "RESTORE_TOKEN",
   LOGIN = "LOGIN",
   LOGOUT = "LOGOUT",
+  GET_ACCOUNT_DETAILS = "GET_ACCOUNT_DETAILS",
 }
 
 type AuthContextAction = {
   type: AuthActionType;
   token: string | null;
   sessionId: string | null;
+  account: Account | undefined;
 };
 
 interface AuthContextValues {
   userToken: string | null;
   sessionId: string | null;
+  account: Account | undefined;
   isLoading: boolean;
   isLoggedIn: boolean;
 }
@@ -37,16 +40,19 @@ interface AuthContextState extends AuthContextValues {
   login: (data: any) => Promise<void>;
   logout: () => Promise<void>;
   signUp: (data: any) => Promise<void>;
+  getAccountDetails: () => Promise<Account | undefined | void>;
 }
 
 const initialAuthState = {
   userToken: null,
   sessionId: null,
+  account: undefined,
   isLoading: false,
   isLoggedIn: false,
   login: async (data: any) => {},
   logout: async () => {},
   signUp: async (data: any) => {},
+  getAccountDetails: async () => {},
 };
 
 export const AuthContext = createContext<AuthContextState>(initialAuthState);
@@ -72,6 +78,11 @@ function authContextReducer(
         userToken: action.token,
         sessionId: action.sessionId,
         isLoading: false,
+      };
+    case AuthActionType.GET_ACCOUNT_DETAILS:
+      return {
+        ...state,
+        account: action.account,
       };
     default:
       return {
@@ -117,10 +128,13 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       if (resSessionId.session_id)
         await storeToLocalData(SESSION_ID_STORAGE_KEY, resSessionId.session_id);
 
+      const account = await getAccountDetails();
+
       dispatch({
         type: AuthActionType.LOGIN,
         token: `${resForReqToken.request_token}`,
         sessionId: `${resSessionId.session_id}`,
+        account: account,
       });
     } catch (e) {
       console.error(e);
@@ -133,6 +147,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       type: AuthActionType.LOGIN,
       token: `${data}-dummy-auth-token`,
       sessionId: null,
+      account: state.account,
     });
   };
 
@@ -148,7 +163,44 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       });
       await removeFromLocalData(SESSION_ID_STORAGE_KEY);
       console.log("logout", { res });
-      dispatch({ type: AuthActionType.LOGOUT, token: null, sessionId: null });
+      dispatch({
+        type: AuthActionType.LOGOUT,
+        token: null,
+        sessionId: null,
+        account: undefined,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getAccountDetails = async () => {
+    try {
+      const sessionId = await getLocalData(SESSION_ID_STORAGE_KEY);
+      const response: AccountApiResponse = await request({
+        url: endpoints.account.details,
+        sessionId: sessionId,
+        apiUrlWithSessionId: true,
+      });
+
+      const account: Account = {
+        avatarPath:
+          response.avatar.tmdb.avatar_path ?? response.avatar.gravatar.hash,
+        accountId: response.id,
+        name: response.name,
+        username: response.username,
+      };
+
+      console.log(account);
+
+      dispatch({
+        type: AuthActionType.GET_ACCOUNT_DETAILS,
+        token: state.userToken,
+        sessionId: sessionId,
+        account,
+      });
+
+      return account;
     } catch (e) {
       console.error(e);
     }
@@ -162,6 +214,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
           type: AuthActionType.RESTORE_TOKEN,
           token: state.userToken,
           sessionId: sessionId,
+          account: state.account,
         });
       }
     };
@@ -173,9 +226,11 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     sessionId: state.sessionId,
     isLoading: state.isLoading,
     isLoggedIn: state.isLoggedIn,
+    account: state.account,
     login,
     logout,
     signUp,
+    getAccountDetails,
   };
 
   return (

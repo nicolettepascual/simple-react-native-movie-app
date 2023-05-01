@@ -3,6 +3,8 @@ import { request } from "../../api/api";
 import { endpoints } from "../../utils/endpoints";
 import { useAuthContext } from "./authContext";
 
+import Toast from "react-native-simple-toast";
+
 enum MoviesActionType {
   GET_TRENDING = "GET_TRENDING",
   SET_CURRENT_PAGE = "SET_CURRENT_PAGE",
@@ -11,6 +13,7 @@ enum MoviesActionType {
   POST_RATING = "POST_RATING",
   GET_RATING = "GET_RATING",
   DELETE_RATING = "DELETE_RATING",
+  ADD_TO_WATCHLIST = "ADD_TO_WATCHLIST",
 }
 
 type MoviesContextAction = {
@@ -38,6 +41,7 @@ interface MoviesContextState extends MoviesContextValues {
     rating: number,
     forDelete?: boolean
   ) => Promise<void>;
+  postToWatchList: (movieId: number, watchlist: boolean) => Promise<void>;
 }
 
 const initialMoviesState = {
@@ -54,6 +58,7 @@ const initialMoviesState = {
     rating: number,
     forDelete?: boolean
   ) => {},
+  postToWatchList: async (movieId: number, watchlist: boolean) => {},
 };
 
 export const MoviesContext =
@@ -97,7 +102,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     initialMoviesState
   );
 
-  const { sessionId } = useAuthContext();
+  const { sessionId, account, getAccountDetails } = useAuthContext();
 
   const setCurrentPage = (page: number) =>
     dispatch({
@@ -192,11 +197,15 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const postRating = async (movieId: number, rating: number, forDelete = false) => {
+  const postRating = async (
+    movieId: number,
+    rating: number,
+    forDelete = false
+  ) => {
     try {
       console.log(sessionId);
       const response = await request({
-        url: endpoints.account.postRating,
+        url: endpoints.movies.postRating,
         sessionId,
         movieId: `${movieId}`,
         apiUrlWithSessionId: true,
@@ -207,6 +216,38 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       console.log(response);
+      // TODO: Dispatch an action that handles the current movie has been rated
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const postToWatchList = async (movieId: number, watchlist: boolean) => {
+    try {
+      const accountId = account?.accountId;
+
+      if (accountId) {
+        const response = await request({
+          url: endpoints.movies.addToWatchlist,
+          sessionId,
+          accountId: `${accountId}`,
+          movieId: `${movieId}`,
+          apiUrlWithSessionId: true,
+          content: {
+            media_type: "movie",
+            media_id: 11,
+            watchlist,
+          },
+          method: "POST",
+        });
+
+        console.log(response);
+        Toast.show("Watchlist updated",
+          Toast.CENTER
+        );
+      }
+
+      // TODO: Dispatch an action that handles the current movie has been added/removed to watchlist
     } catch (e) {
       console.error(e);
     }
@@ -222,6 +263,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     getTrendingMovies,
     getMovieReviews,
     postRating,
+    postToWatchList,
   };
 
   return (

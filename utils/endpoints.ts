@@ -10,10 +10,11 @@ export const endpoints = {
     details: "movie/{movie_id}",
     reviews: "movie/{movie_id}/reviews",
     search: "search/movie",
+    postRating: "movie/{movie_id}/rating",
+    addToWatchlist: "account/{account_id}/watchlist",
   },
   account: {
     details: "account",
-    postRating: "movie/{movie_id}/rating",
   },
   images: "https://image.tmdb.org/t/p/w500/",
 };

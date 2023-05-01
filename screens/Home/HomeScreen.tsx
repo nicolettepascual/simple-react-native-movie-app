@@ -8,6 +8,8 @@ import { Footer } from "./components/Footer";
 import { MoviePoster } from "./components/MoviePoster";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import Toast from "react-native-simple-toast";
+
 export type HomeStackParamList = {
   HomeScreen: undefined;
   MovieDetails: { movie: Movie };
@@ -48,6 +50,8 @@ function HomeScreen() {
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 export function HomeStackScreen() {
+  const { movieDetails, postToWatchList } = useMoviesContext();
+
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
@@ -62,7 +66,10 @@ export function HomeStackScreen() {
           title: route.params.movie.title,
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => console.log("Watchlist")}
+              onPress={async () => {
+                const movieId = movieDetails?.id;
+                if (movieId) postToWatchList(movieId, true);
+              }}
               style={{ marginRight: 10 }}
             >
               <Ionicons

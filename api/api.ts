@@ -42,6 +42,7 @@ export interface ApiRequest {
   content?: object;
   method?: ApiMethod;
   sessionId?: string | null;
+  accountId?: string | null;
   page?: number;
   movieId?: string | null;
   apiUrlWithSessionId?: boolean;
