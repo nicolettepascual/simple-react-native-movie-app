@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Image,
   SafeAreaView,
-  StatusBar,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -13,7 +11,6 @@ import { useAuthContext } from "../../global/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getAvatarPath } from "../../utils/global";
 import { globalStyles, paddingStyles } from "../../global/styles";
-import { useAccountContext } from "../../global/context/accountContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RatedMovies } from "./screens/RatedMovies";
 import { Watchlist } from "./screens/Watchlist";
