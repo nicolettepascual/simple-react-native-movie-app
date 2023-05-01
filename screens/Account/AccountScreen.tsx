@@ -13,34 +13,28 @@ import { useAuthContext } from "../../global/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getAvatarPath } from "../../utils/global";
 import { globalStyles, paddingStyles } from "../../global/styles";
-import { useMoviesContext } from "../../global/context/moviesContext";
 import { useAccountContext } from "../../global/context/accountContext";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RatedMovies } from "./screens/RatedMovies";
+import { Watchlist } from "./screens/Watchlist";
+import { useNavigation } from "@react-navigation/native";
 
-export function AccountScreen() {
+function AccountScreen() {
   const { logout, account, getAccountDetails } = useAuthContext();
-  const { watchlist, ratedMovies, getRatedMovies, getWatchlist } =
-    useAccountContext();
+  const navigation = useNavigation();
 
   const settings = [
-    { title: "Ratings", key: "ratings" },
+    { title: "Rated Movies", key: "ratings" },
     { title: "Watchlist", key: "watchlist" },
   ];
 
   const handleSettingPress = async (index: number) => {
     if (settings[index].key === "ratings") {
-      await getRatedMovies();
+      navigation.navigate("RatedMovies" as never);
     } else if (settings[index].key === "watchlist") {
-      await getWatchlist();
+      navigation.navigate("Watchlist" as never);
     }
   };
-
-  useEffect(() => {
-    console.log(ratedMovies);
-  }, [ratedMovies]);
-
-  useEffect(() => {
-    console.log(watchlist);
-  }, [watchlist]);
 
   useEffect(() => {
     const fetchAccountDetails = async () => {
@@ -89,5 +83,28 @@ export function AccountScreen() {
         <Text style={styles.settingValue}>{">"}</Text>
       </TouchableOpacity>
     </SafeAreaView>
+  );
+}
+
+const AccountStack = createNativeStackNavigator();
+export function AccountStackScreen() {
+  return (
+    <AccountStack.Navigator>
+      <AccountStack.Screen
+        name="AccountScreen"
+        component={AccountScreen}
+        options={{ headerShown: false }}
+      />
+      <AccountStack.Screen
+        name="RatedMovies"
+        component={RatedMovies}
+        options={{ headerShown: false }}
+      />
+      <AccountStack.Screen
+        name="Watchlist"
+        component={Watchlist}
+        options={{ headerShown: false }}
+      />
+    </AccountStack.Navigator>
   );
 }

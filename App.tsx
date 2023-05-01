@@ -10,7 +10,7 @@ import {
 } from "./global/context/authContext";
 import { MoviesContextProvider } from "./global/context/moviesContext";
 
-import { AccountScreen } from "./screens/Account/AccountScreen";
+import { AccountStackScreen } from "./screens/Account/AccountScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
 import { HomeStackScreen } from "./screens/Home/HomeScreen";
@@ -92,7 +92,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Account"
-        component={AccountScreen}
+        component={AccountStackScreen}
         options={{ headerShown: false }}
       />
     </Tab.Navigator>

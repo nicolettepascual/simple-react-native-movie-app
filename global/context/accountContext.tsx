@@ -1,18 +1,6 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-} from "react";
+import { ReactNode, createContext, useContext, useReducer } from "react";
 import { request } from "../../api/api";
 import { endpoints } from "../../utils/endpoints";
-import {
-  SESSION_ID_STORAGE_KEY,
-  getLocalData,
-  removeFromLocalData,
-  storeToLocalData,
-} from "../../utils/storage";
 import { useAuthContext } from "./authContext";
 
 enum AccountActionType {
@@ -59,7 +47,7 @@ function AccountContextReducer(
     case AccountActionType.GET_WATCHLIST:
       return {
         ...state,
-        ratedMovies: action.ratedMovies,
+        watchlist: action.watchlist,
       };
     default:
       return {
@@ -137,8 +125,6 @@ const AccountContextProvider = ({ children }: { children: ReactNode }) => {
         vote_average: movie.vote_average,
         vote_count: movie.vote_count,
       }));
-
-      console.log(watchlist);
 
       dispatch({
         type: AccountActionType.GET_WATCHLIST,
