@@ -1,4 +1,6 @@
-import { StatusBar, StyleSheet } from "react-native";
+import { Dimensions, StatusBar, StyleSheet } from "react-native";
+
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,6 +14,16 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 20,
     marginBottom: 10,
+  },
+  accountAvatar: {
+    width: width * 0.2,
+    height: width * 0.2,
+    borderRadius: 150 / 2,
+    overflow: "hidden",
+    marginRight: 10,
+  },
+  username: {
+    fontWeight: "bold",
   },
   setting: {
     flexDirection: "row",

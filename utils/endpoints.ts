@@ -12,6 +12,7 @@ export const endpoints = {
     search: "search/movie",
   },
   account: {
+    details: "account",
     postRating: "movie/{movie_id}/rating",
   },
   images: "https://image.tmdb.org/t/p/w500/",

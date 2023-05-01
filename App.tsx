@@ -16,6 +16,7 @@ import { SignUpScreen } from "./screens/SignUpScreen";
 import { HomeStackScreen } from "./screens/Home/HomeScreen";
 import { SearchScreen } from "./screens/Search/SearchScreen";
 import { SearchContextProvider } from "./global/context/searchContext";
+import { AccountContextProvider } from "./global/context/accountContext";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,13 +24,15 @@ const Tab = createBottomTabNavigator();
 const App = () => {
   return (
     <AuthContextProvider>
-      <MoviesContextProvider>
-        <SearchContextProvider>
-          <NavigationContainer>
-            <AppComponent />
-          </NavigationContainer>
-        </SearchContextProvider>
-      </MoviesContextProvider>
+      <AccountContextProvider>
+        <MoviesContextProvider>
+          <SearchContextProvider>
+            <NavigationContainer>
+              <AppComponent />
+            </NavigationContainer>
+          </SearchContextProvider>
+        </MoviesContextProvider>
+      </AccountContextProvider>
     </AuthContextProvider>
   );
 };

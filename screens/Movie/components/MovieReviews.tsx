@@ -3,15 +3,9 @@ import { globalStyles, paddingStyles } from "../../../global/styles";
 import { styles } from "../MovieDetailsScreen.style";
 import { reviewStyles } from "./MovieReview.styles";
 import { endpoints } from "../../../utils/endpoints";
+import { getAvatarPath } from "../../../utils/global";
 
 export function MovieReviews({ movieReviews }: { movieReviews: Review[] }) {
-  function getAvatarPath(path: string) {
-    if (!path) return "undefined";
-    if (path.substring(0, 9) !== "/https://")
-      return `${endpoints.images}${path}`;
-    else return path.substring(1);
-  }
-
   function convertDate(dateStr: string) {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-GB", {

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Image,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -10,8 +11,12 @@ import {
 import { styles } from "./AccountScreen.style";
 import { useAuthContext } from "../../global/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useAccountContext } from "../../global/context/accountContext";
+import { getAvatarPath } from "../../utils/global";
+import { globalStyles, paddingStyles } from "../../global/styles";
 
 export function AccountScreen() {
+  const { account, getAccountDetails } = useAccountContext();
   const { logout } = useAuthContext();
 
   const settings = [
@@ -23,9 +28,33 @@ export function AccountScreen() {
     console.log(settings[index]);
   };
 
+  useEffect(() => {
+    const fetchAccountDetails = async () => {
+      await getAccountDetails();
+    };
+
+    fetchAccountDetails();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Account</Text>
+
+      <View style={[paddingStyles.padding15, globalStyles.row]}>
+        <Image
+          style={[styles.accountAvatar]}
+          source={{
+            uri: getAvatarPath(account?.avatarPath),
+          }}
+        />
+        <View>
+          <Text style={[globalStyles.title, styles.username]}>
+            {account?.username}
+          </Text>
+          <Text>Account ID: {account?.accountId}</Text>
+        </View>
+      </View>
+
       {settings.map((setting, index) => (
         <TouchableOpacity
           key={index}

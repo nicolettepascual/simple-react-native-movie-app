@@ -11,6 +11,23 @@ interface SessionApiResponse extends BaseApiResponse {
   session_id: string;
 }
 
+interface AccountApiResponse extends BaseApiResponse {
+  avatar: {
+    gravatar: {
+      hash: string;
+    };
+    tmdb: {
+      avatar_path: string;
+    };
+  };
+  id: number;
+  iso_639_1: string;
+  iso_3166_1: string;
+  name: string;
+  include_adult: boolean;
+  username: string;
+}
+
 // Movies
 interface Movie {
   backdrop_path: string;
@@ -51,4 +68,11 @@ interface Review {
   created_at: string;
   updated_at: string;
   url: string;
+}
+
+interface Account {
+  avatarPath: string;
+  accountId: number;
+  name: string;
+  username: string;
 }

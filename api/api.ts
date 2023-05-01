@@ -77,9 +77,9 @@ export async function request<T>({
 
   if (movieId) {
     apiUrl = apiUrl.replace("{movie_id}", movieId);
-    if (apiUrlWithSessionId && sessionId) {
-      apiUrl += `&session_id=${sessionId}`;
-    }
+  }
+  if (apiUrlWithSessionId && sessionId) {
+    apiUrl += `&session_id=${sessionId}`;
   }
 
   console.log({ apiUrl, requestOptions });
