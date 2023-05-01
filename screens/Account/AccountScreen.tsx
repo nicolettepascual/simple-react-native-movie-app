@@ -7,16 +7,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { styles } from "./ProfileScreen.style";
+import { styles } from "./AccountScreen.style";
 import { useAuthContext } from "../../global/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-type Setting = {
-  title: string;
-  value: string;
-};
-
-export function ProfileScreen() {
+export function AccountScreen() {
   const { logout } = useAuthContext();
 
   const settings = [

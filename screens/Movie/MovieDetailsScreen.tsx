@@ -3,7 +3,6 @@ import {
   Text,
   ActivityIndicator,
   FlatList,
-  TouchableOpacity,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { RouteProp } from "@react-navigation/native";
@@ -106,11 +105,10 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
                   <>
                     <View style={styles.ratingView}>
                       <Text style={styles.ratingTitle}>
-                        Your Rating:{" "}
                         {`${
                           ratingText === 0
                             ? "Not Yet Rated"
-                            : `${ratingText}/10`
+                            : `Your Rating: ${ratingText}/10`
                         } `}
                       </Text>
                     </View>

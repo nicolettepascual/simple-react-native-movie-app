@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView } from "react-native";
+import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useMoviesContext } from "../../global/context/moviesContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -6,6 +6,7 @@ import { styles } from "./HomeScreen.styles";
 import { MovieDetailsScreen } from "../Movie/MovieDetailsScreen";
 import { Footer } from "./components/Footer";
 import { MoviePoster } from "./components/MoviePoster";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export type HomeStackParamList = {
   HomeScreen: undefined;
@@ -57,7 +58,21 @@ export function HomeStackScreen() {
       <HomeStack.Screen
         name="MovieDetails"
         component={MovieDetailsScreen}
-        options={({ route }) => ({ title: route.params.movie.title })}
+        options={({ route }) => ({
+          title: route.params.movie.title,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => console.log("Watchlist")}
+              style={{ marginRight: 10 }}
+            >
+              <Ionicons
+                name="ios-heart-outline"
+                size={24}
+                color="deepskyblue"
+              />
+            </TouchableOpacity>
+          ),
+        })}
       />
     </HomeStack.Navigator>
   );
