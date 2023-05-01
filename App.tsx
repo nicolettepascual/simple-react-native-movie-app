@@ -10,7 +10,7 @@ import {
 } from "./global/context/authContext";
 import { MoviesContextProvider } from "./global/context/moviesContext";
 
-import { ProfileScreen } from "./screens/ProfileScreen";
+import { ProfileScreen } from "./screens/Profile/ProfileScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { SignUpScreen } from "./screens/SignUpScreen";
 import { HomeStackScreen } from "./screens/Home/HomeScreen";
@@ -63,7 +63,7 @@ function TabNavigator() {
           if (route.name === "Home") {
             const iconName = focused ? "home-sharp" : "home-outline";
             return <Ionicons name={iconName} size={size} color={color} />;
-          } else if (route.name === "Profile") {
+          } else if (route.name === "Account") {
             const iconName = focused
               ? "ios-person-sharp"
               : "ios-person-outline";
@@ -87,7 +87,11 @@ function TabNavigator() {
         component={SearchScreen}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Account"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
 }
