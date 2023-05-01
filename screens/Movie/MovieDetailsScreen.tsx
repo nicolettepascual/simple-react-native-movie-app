@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { RouteProp } from "@react-navigation/native";
 import { Rating } from "react-native-ratings";
+import Toast from "react-native-simple-toast";
 
 import { HomeStackParamList } from "../Home/HomeScreen";
 import { styles } from "./MovieDetailsScreen.style";
@@ -17,7 +18,6 @@ import { MovieBackdrop } from "./components/MovieBackdrop";
 import { MovieDetailsRow } from "./components/MovieDetailsRow";
 import { MovieSynopsis } from "./components/MovieSynopsis";
 import { MovieReviews } from "./components/MovieReviews";
-import { paddingStyles } from "../../global/styles";
 import { debounce } from "lodash";
 
 type MovieDetailsScreenRouteProp = RouteProp<
@@ -53,7 +53,13 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
 
   function handleOnRatingComplete(rating: number) {
     setRatingText(rating);
-    debouncedRating(movie.id, rating);
+    debouncedRating(movie.id, rating, rating === 0);
+    Toast.show(
+      rating === 0
+        ? "Your rating has been deleted"
+        : "Your Rating has been posted",
+      Toast.CENTER
+    );
   }
 
   useEffect(() => {
@@ -99,9 +105,14 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
                 return (
                   <>
                     <View style={styles.ratingView}>
-                      <Text
-                        style={styles.ratingTitle}
-                      >{`Your rating: ${ratingText}/10`}</Text>
+                      <Text style={styles.ratingTitle}>
+                        Your Rating:{" "}
+                        {`${
+                          ratingText === 0
+                            ? "Not Yet Rated"
+                            : `${ratingText}/10`
+                        } `}
+                      </Text>
                     </View>
                     <Rating
                       onFinishRating={(rating: number) => {

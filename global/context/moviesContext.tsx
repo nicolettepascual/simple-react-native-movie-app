@@ -10,6 +10,7 @@ enum MoviesActionType {
   GET_MOVIE_REVIEWS = "GET_MOVIE_REVIEWS",
   POST_RATING = "POST_RATING",
   GET_RATING = "GET_RATING",
+  DELETE_RATING = "DELETE_RATING",
 }
 
 type MoviesContextAction = {
@@ -32,7 +33,11 @@ interface MoviesContextState extends MoviesContextValues {
   setCurrentPage: (page: number) => void;
   getMovieDetails: (movieId: string) => Promise<void>;
   getMovieReviews: (movieId: string) => Promise<void>;
-  postRating: (movieId: number, rating: number) => Promise<void>;
+  postRating: (
+    movieId: number,
+    rating: number,
+    forDelete?: boolean
+  ) => Promise<void>;
 }
 
 const initialMoviesState = {
@@ -44,7 +49,11 @@ const initialMoviesState = {
   setCurrentPage: (page: number) => {},
   getMovieDetails: async (movieId: string) => {},
   getMovieReviews: async (movieId: string) => {},
-  postRating: async (movieId: number, rating: number) => {},
+  postRating: async (
+    movieId: number,
+    rating: number,
+    forDelete?: boolean
+  ) => {},
 };
 
 export const MoviesContext =
@@ -183,7 +192,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const postRating = async (movieId: number, rating: number) => {
+  const postRating = async (movieId: number, rating: number, forDelete = false) => {
     try {
       console.log(sessionId);
       const response = await request({
@@ -194,7 +203,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
         content: {
           value: Number(rating),
         },
-        method: "POST",
+        method: forDelete ? "DELETE" : "POST",
       });
 
       console.log(response);
