@@ -235,16 +235,14 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
           apiUrlWithSessionId: true,
           content: {
             media_type: "movie",
-            media_id: 11,
+            media_id: movieId,
             watchlist,
           },
           method: "POST",
         });
 
         console.log(response);
-        Toast.show("Watchlist updated",
-          Toast.CENTER
-        );
+        Toast.show("Watchlist updated", Toast.CENTER);
       }
 
       // TODO: Dispatch an action that handles the current movie has been added/removed to watchlist

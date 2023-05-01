@@ -13,18 +13,34 @@ import { useAuthContext } from "../../global/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getAvatarPath } from "../../utils/global";
 import { globalStyles, paddingStyles } from "../../global/styles";
+import { useMoviesContext } from "../../global/context/moviesContext";
+import { useAccountContext } from "../../global/context/accountContext";
 
 export function AccountScreen() {
   const { logout, account, getAccountDetails } = useAuthContext();
+  const { watchlist, ratedMovies, getRatedMovies, getWatchlist } =
+    useAccountContext();
 
   const settings = [
-    { title: "Ratings", value: ">" },
-    { title: "Watchlist", value: ">" },
+    { title: "Ratings", key: "ratings" },
+    { title: "Watchlist", key: "watchlist" },
   ];
 
-  const handleSettingPress = (index: number) => {
-    console.log(settings[index]);
+  const handleSettingPress = async (index: number) => {
+    if (settings[index].key === "ratings") {
+      await getRatedMovies();
+    } else if (settings[index].key === "watchlist") {
+      await getWatchlist();
+    }
   };
+
+  useEffect(() => {
+    console.log(ratedMovies);
+  }, [ratedMovies]);
+
+  useEffect(() => {
+    console.log(watchlist);
+  }, [watchlist]);
 
   useEffect(() => {
     const fetchAccountDetails = async () => {

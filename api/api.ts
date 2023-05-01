@@ -53,6 +53,7 @@ export async function request<T>({
   content = {},
   method = "GET",
   sessionId = undefined,
+  accountId = undefined,
   page,
   movieId,
   apiUrlWithSessionId = false,
@@ -81,6 +82,9 @@ export async function request<T>({
   }
   if (apiUrlWithSessionId && sessionId) {
     apiUrl += `&session_id=${sessionId}`;
+  }
+  if (accountId) {
+    apiUrl = apiUrl.replace("{account_id}", accountId);
   }
 
   console.log({ apiUrl, requestOptions });

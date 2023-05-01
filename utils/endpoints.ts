@@ -15,6 +15,8 @@ export const endpoints = {
   },
   account: {
     details: "account",
+    ratedMovies: "account/{account_id}/rated/movies",
+    watchlist: "account/{account_id}/watchlist/movies",
   },
   images: "https://image.tmdb.org/t/p/w500/",
 };
