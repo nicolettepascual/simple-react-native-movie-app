@@ -8,6 +8,8 @@ enum MoviesActionType {
   SET_CURRENT_PAGE = "SET_CURRENT_PAGE",
   GET_MOVIE_DETAILS = "GET_MOVIE_DETAILS",
   GET_MOVIE_REVIEWS = "GET_MOVIE_REVIEWS",
+  POST_RATING = "POST_RATING",
+  GET_RATING = "GET_RATING",
 }
 
 type MoviesContextAction = {
@@ -30,6 +32,7 @@ interface MoviesContextState extends MoviesContextValues {
   setCurrentPage: (page: number) => void;
   getMovieDetails: (movieId: string) => Promise<void>;
   getMovieReviews: (movieId: string) => Promise<void>;
+  postRating: (movieId: number, rating: number) => Promise<void>;
 }
 
 const initialMoviesState = {
@@ -41,6 +44,7 @@ const initialMoviesState = {
   setCurrentPage: (page: number) => {},
   getMovieDetails: async (movieId: string) => {},
   getMovieReviews: async (movieId: string) => {},
+  postRating: async (movieId: number, rating: number) => {},
 };
 
 export const MoviesContext =
@@ -179,6 +183,26 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const postRating = async (movieId: number, rating: number) => {
+    try {
+      console.log(sessionId);
+      const response = await request({
+        url: endpoints.account.postRating,
+        sessionId,
+        movieId: `${movieId}`,
+        apiUrlWithSessionId: true,
+        content: {
+          value: Number(rating),
+        },
+        method: "POST",
+      });
+
+      console.log(response);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const MoviesContextProviderValues = {
     trendingMovies: state.trendingMovies,
     currentPage: state.currentPage,
@@ -188,6 +212,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentPage,
     getTrendingMovies,
     getMovieReviews,
+    postRating,
   };
 
   return (

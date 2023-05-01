@@ -44,6 +44,7 @@ export interface ApiRequest {
   sessionId?: string | null;
   page?: number;
   movieId?: string | null;
+  apiUrlWithSessionId?: boolean;
 }
 
 export async function request<T>({
@@ -53,6 +54,7 @@ export async function request<T>({
   sessionId = undefined,
   page,
   movieId,
+  apiUrlWithSessionId = false,
 }: ApiRequest): Promise<T> {
   const obj = page
     ? { ...defaultContent, ...content, page: page }
@@ -73,7 +75,14 @@ export async function request<T>({
 
   let apiUrl = `${API_URL}/${url}?${queryString(obj)}`;
 
-  if (movieId) apiUrl = apiUrl.replace("{movie_id}", movieId);
+  if (movieId) {
+    apiUrl = apiUrl.replace("{movie_id}", movieId);
+    if (apiUrlWithSessionId && sessionId) {
+      apiUrl += `&session_id=${sessionId}`;
+    }
+  }
+
+  console.log({ apiUrl, requestOptions });
 
   const response = await fetch(`${apiUrl}`, requestOptions);
 

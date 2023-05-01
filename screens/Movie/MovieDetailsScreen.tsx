@@ -1,4 +1,10 @@
-import { View, Text, ActivityIndicator, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { HomeStackParamList } from "../Home/HomeScreen";
 import { styles } from "./MovieDetailsScreen.style";
@@ -26,8 +32,13 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
     { key: "synopsis" },
     { key: "reviews" },
   ];
-  const { movieDetails, movieReviews, getMovieDetails, getMovieReviews } =
-    useMoviesContext();
+  const {
+    movieDetails,
+    movieReviews,
+    getMovieDetails,
+    getMovieReviews,
+    postRating,
+  } = useMoviesContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -74,7 +85,14 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
                 return (
                   <>
                     {movieReviews && movieReviews?.length != 0 ? (
-                      <MovieReviews movieReviews={movieReviews} />
+                      <>
+                        <TouchableOpacity
+                          onPress={() => postRating(movie.id, 9.5)}
+                        >
+                          <Text>Rate</Text>
+                        </TouchableOpacity>
+                        <MovieReviews movieReviews={movieReviews} />
+                      </>
                     ) : (
                       <></>
                     )}
