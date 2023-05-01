@@ -19,7 +19,9 @@
     "lodash": "^4.17.21",
     "react": "18.2.0",
     "react-native": "0.71.7",
-    "react-native-dynamic-search-bar": "^2.0.2"
+    "react-native-dynamic-search-bar": "^2.0.2",
+    "react-native-ratings": "^8.1.0",
+    "react-native-star-rating": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -27,6 +29,7 @@
     "@types/jest": "^29.5.1",
     "@types/lodash": "^4.14.194",
     "@types/react": "^18.2.0",
+    "@types/react-native-star-rating": "^1.1.2",
     "@types/react-test-renderer": "^18.0.0",
     "typescript": "^5.0.4"
   },

@@ -5,15 +5,20 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { useEffect, useState } from "react";
 import { RouteProp } from "@react-navigation/native";
+import { Rating } from "react-native-ratings";
+
 import { HomeStackParamList } from "../Home/HomeScreen";
 import { styles } from "./MovieDetailsScreen.style";
-import { useEffect, useState } from "react";
 import { useMoviesContext } from "../../global/context/moviesContext";
+
 import { MovieBackdrop } from "./components/MovieBackdrop";
 import { MovieDetailsRow } from "./components/MovieDetailsRow";
 import { MovieSynopsis } from "./components/MovieSynopsis";
 import { MovieReviews } from "./components/MovieReviews";
+import { paddingStyles } from "../../global/styles";
+import { debounce } from "lodash";
 
 type MovieDetailsScreenRouteProp = RouteProp<
   HomeStackParamList,
@@ -30,6 +35,7 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
     { key: "backdrop" },
     { key: "detailsRow" },
     { key: "synopsis" },
+    { key: "rating" },
     { key: "reviews" },
   ];
   const {
@@ -41,6 +47,14 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
   } = useMoviesContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [ratingText, setRatingText] = useState<number>(0);
+
+  const debouncedRating = debounce(postRating, 1500);
+
+  function handleOnRatingComplete(rating: number) {
+    setRatingText(rating);
+    debouncedRating(movie.id, rating);
+  }
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -81,18 +95,38 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
                 return <MovieDetailsRow movieDetails={movieDetails} />;
               case "synopsis":
                 return <MovieSynopsis movieDetails={movieDetails} />;
+              case "rating":
+                return (
+                  <>
+                    <View style={styles.ratingView}>
+                      <Text
+                        style={styles.ratingTitle}
+                      >{`Your rating: ${ratingText}/10`}</Text>
+                    </View>
+                    <Rating
+                      onFinishRating={(rating: number) => {
+                        handleOnRatingComplete(rating);
+                      }}
+                      onSwipeRating={(rating: number) => {
+                        setRatingText(rating);
+                      }}
+                      type="custom"
+                      ratingColor="deepskyblue"
+                      ratingBackgroundColor="#c8c7c8"
+                      ratingCount={10}
+                      imageSize={30}
+                      jumpValue={0.5}
+                      fractions={1}
+                      startingValue={ratingText}
+                      tintColor="#efefef"
+                    />
+                  </>
+                );
               case "reviews":
                 return (
                   <>
                     {movieReviews && movieReviews?.length != 0 ? (
-                      <>
-                        <TouchableOpacity
-                          onPress={() => postRating(movie.id, 9.5)}
-                        >
-                          <Text>Rate</Text>
-                        </TouchableOpacity>
-                        <MovieReviews movieReviews={movieReviews} />
-                      </>
+                      <MovieReviews movieReviews={movieReviews} />
                     ) : (
                       <></>
                     )}

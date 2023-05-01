@@ -22,7 +22,7 @@ export function MovieReviews({ movieReviews }: { movieReviews: Review[] }) {
   }
 
   return (
-    <View style={[globalStyles.paddingL15R15]}>
+    <View style={[globalStyles.paddingL15R15, paddingStyles.paddingT15]}>
       <Text style={[styles.movieDetailsTitle]}>Reviews</Text>
       <FlatList
         data={movieReviews}

@@ -48,4 +48,11 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  ratingView: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ratingTitle: {
+    fontWeight: "bold",
+  },
 });
