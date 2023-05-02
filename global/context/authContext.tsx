@@ -39,7 +39,6 @@ interface AuthContextValues {
 interface AuthContextState extends AuthContextValues {
   login: (data: any) => Promise<void>;
   logout: () => Promise<void>;
-  signUp: (data: any) => Promise<void>;
   getAccountDetails: () => Promise<Account | undefined | void>;
 }
 
@@ -51,7 +50,6 @@ const initialAuthState = {
   isLoggedIn: false,
   login: async (data: any) => {},
   logout: async () => {},
-  signUp: async (data: any) => {},
   getAccountDetails: async () => {},
 };
 
@@ -141,16 +139,6 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUp = async (data: any) => {
-    // TODO: Sign Up API call
-    dispatch({
-      type: AuthActionType.LOGIN,
-      token: `${data}-dummy-auth-token`,
-      sessionId: null,
-      account: state.account,
-    });
-  };
-
   const logout = async () => {
     try {
       const sessionId = await getLocalData(SESSION_ID_STORAGE_KEY);
@@ -229,7 +217,6 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     account: state.account,
     login,
     logout,
-    signUp,
     getAccountDetails,
   };
 

@@ -1,4 +1,5 @@
 import { Dimensions, StatusBar, StyleSheet } from "react-native";
+import { colors } from "../../global/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -6,7 +7,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: colors.background,
   },
   title: {
     fontSize: 24,
@@ -46,7 +47,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: colors.grayBorderColor,
   },
   settingTitle: {
     fontSize: 18,
@@ -54,23 +55,23 @@ export const styles = StyleSheet.create({
   },
   settingValue: {
     fontSize: 16,
-    color: "#888",
+    color: colors.lightGray,
   },
   logoutButton: {
-    backgroundColor: "red",
+    backgroundColor: colors.red,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginTop: 24,
   },
   logoutButtonText: {
-    color: "crimson",
+    color: colors.red,
     fontSize: 16,
     fontWeight: "bold",
   },
   logoutSetting: {
     borderTopWidth: 1,
-    borderTopColor: "#ccc",
+    borderTopColor: colors.grayBorderColor,
     position: "absolute",
     bottom: 20,
     left: 0,

@@ -1,9 +1,4 @@
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  FlatList,
-} from "react-native";
+import { View, Text, ActivityIndicator, FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import { RouteProp } from "@react-navigation/native";
 import { Rating } from "react-native-ratings";
@@ -18,6 +13,8 @@ import { MovieDetailsRow } from "./components/MovieDetailsRow";
 import { MovieSynopsis } from "./components/MovieSynopsis";
 import { MovieReviews } from "./components/MovieReviews";
 import { debounce } from "lodash";
+import { colors } from "../../global/colors";
+import { MovieStarRating } from "./components/MovieStarRating";
 
 type MovieDetailsScreenRouteProp = RouteProp<
   HomeStackParamList,
@@ -30,6 +27,7 @@ type MovieDetailsProps = {
 
 export function MovieDetailsScreen({ route }: MovieDetailsProps) {
   const { movie } = route.params;
+  // FIXME: create enums for keys
   const movieDetailsScreenComponents = [
     { key: "backdrop" },
     { key: "detailsRow" },
@@ -47,19 +45,6 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [ratingText, setRatingText] = useState<number>(0);
-
-  const debouncedRating = debounce(postRating, 1500);
-
-  function handleOnRatingComplete(rating: number) {
-    setRatingText(rating);
-    debouncedRating(movie.id, rating, rating === 0);
-    Toast.show(
-      rating === 0
-        ? "Your rating has been deleted"
-        : "Your Rating has been posted",
-      Toast.CENTER
-    );
-  }
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -101,36 +86,7 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
               case "synopsis":
                 return <MovieSynopsis movieDetails={movieDetails} />;
               case "rating":
-                return (
-                  <>
-                    <View style={styles.ratingView}>
-                      <Text style={styles.ratingTitle}>
-                        {`${
-                          ratingText === 0
-                            ? "Not Yet Rated"
-                            : `Your Rating: ${ratingText}/10`
-                        } `}
-                      </Text>
-                    </View>
-                    <Rating
-                      onFinishRating={(rating: number) => {
-                        handleOnRatingComplete(rating);
-                      }}
-                      onSwipeRating={(rating: number) => {
-                        setRatingText(rating);
-                      }}
-                      type="custom"
-                      ratingColor="deepskyblue"
-                      ratingBackgroundColor="#c8c7c8"
-                      ratingCount={10}
-                      imageSize={30}
-                      jumpValue={0.5}
-                      fractions={1}
-                      startingValue={ratingText}
-                      tintColor="#efefef"
-                    />
-                  </>
-                );
+                return <MovieStarRating movieId={movie.id} />;
               case "reviews":
                 return (
                   <>

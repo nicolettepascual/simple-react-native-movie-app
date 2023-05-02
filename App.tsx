@@ -11,12 +11,12 @@ import {
 import { MoviesContextProvider } from "./global/context/moviesContext";
 
 import { AccountStackScreen } from "./screens/Account/AccountScreen";
-import { LoginScreen } from "./screens/LoginScreen";
-import { SignUpScreen } from "./screens/SignUpScreen";
 import { HomeStackScreen } from "./screens/Home/HomeScreen";
 import { SearchScreen } from "./screens/Search/SearchScreen";
 import { SearchContextProvider } from "./global/context/searchContext";
 import { AccountContextProvider } from "./global/context/accountContext";
+import { LoginScreen } from "./screens/Login/LoginScreen";
+import { colors } from "./global/colors";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -55,7 +55,6 @@ function AppComponent() {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
         </>
       )}
     </Stack.Navigator>
@@ -66,6 +65,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        // FIXME: Clean up code
         tabBarIcon: ({ focused, color, size }) => {
           if (route.name === "Home") {
             const iconName = focused ? "home-sharp" : "home-outline";
@@ -80,10 +80,10 @@ function TabNavigator() {
             return <Ionicons name={iconName} size={size} color={color} />;
           }
         },
-        tabBarActiveTintColor: "deepskyblue",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.gray,
         headerStyle: {
-          backgroundColor: "#efefef",
+          backgroundColor: colors.background,
         },
       })}
     >

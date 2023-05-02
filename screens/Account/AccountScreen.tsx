@@ -15,11 +15,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RatedMovies } from "./screens/RatedMovies";
 import { Watchlist } from "./screens/Watchlist";
 import { useNavigation } from "@react-navigation/native";
+import { colors } from "../../global/colors";
 
 function AccountScreen() {
   const { logout, account, getAccountDetails } = useAuthContext();
   const navigation = useNavigation();
 
+  // FIXME: create enum for keys
   const settings = [
     { title: "Rated Movies", key: "ratings" },
     { title: "Watchlist", key: "watchlist" },
@@ -38,8 +40,8 @@ function AccountScreen() {
       await getAccountDetails();
     };
 
-    fetchAccountDetails();
-  }, []);
+    if (!account) fetchAccountDetails();
+  }, [account]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -67,7 +69,11 @@ function AccountScreen() {
           onPress={() => handleSettingPress(index)}
         >
           <Text style={styles.settingTitle}>{setting.title}</Text>
-          <Ionicons name={"arrow-forward-sharp"} size={20} color={"#888"} />
+          <Ionicons
+            name={"arrow-forward-sharp"}
+            size={20}
+            color={colors.lightGray}
+          />
         </TouchableOpacity>
       ))}
       <TouchableOpacity
@@ -89,11 +95,11 @@ export function AccountStackScreen() {
     <AccountStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#efefef",
+          backgroundColor: colors.background,
         },
         headerShadowVisible: false,
         headerTransparent: true,
-        headerTintColor: "black",
+        headerTintColor: colors.black,
         headerTitleStyle: {
           fontWeight: "bold",
         },
