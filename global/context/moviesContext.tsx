@@ -22,6 +22,7 @@ enum MoviesActionType {
   GET_RATING = "GET_RATING",
   DELETE_RATING = "DELETE_RATING",
   ADD_TO_WATCHLIST = "ADD_TO_WATCHLIST",
+  UPDATE_IF_RATED = "UPDATE_IF_RATED",
 }
 
 type MoviesContextAction = {
@@ -32,6 +33,8 @@ type MoviesContextAction = {
   movieReviews?: Review[];
   currentMovieId?: number;
   isCurrentMovieInWatchlist?: boolean;
+  isCurrentMovieRated?: boolean;
+  currentMovieRating?: number;
 };
 
 interface MoviesContextValues {
@@ -41,6 +44,8 @@ interface MoviesContextValues {
   movieReviews?: Review[];
   currentMovieId?: number;
   isCurrentMovieInWatchlist?: boolean;
+  isCurrentMovieRated?: boolean;
+  currentMovieRating?: number;
 }
 
 interface MoviesContextState extends MoviesContextValues {
@@ -55,6 +60,7 @@ interface MoviesContextState extends MoviesContextValues {
   ) => Promise<void>;
   postToWatchList: (movieId: number, watchlist: boolean) => Promise<void>;
   addToWatchList: (status: boolean) => void;
+  updateIfRated: (rating: number) => void;
 }
 
 const initialMoviesState = {
@@ -64,6 +70,8 @@ const initialMoviesState = {
   movieReviews: [],
   currentMovieId: undefined,
   isCurrentMovieInWatchlist: false,
+  isCurrentMovieRated: false,
+  currentMovieRating: 0,
   getTrendingMovies: async (page: number) => {},
   setCurrentPage: (page: number) => {},
   getMovieDetails: async (movieId: string) => {},
@@ -75,6 +83,7 @@ const initialMoviesState = {
   ) => {},
   postToWatchList: async (movieId: number, watchlist: boolean) => {},
   addToWatchList: (status: boolean) => {},
+  updateIfRated: (rating: number) => {},
 };
 
 export const MoviesContext =
@@ -111,6 +120,12 @@ function MoviesContextReducer(
         ...state,
         isCurrentMovieInWatchlist: action.isCurrentMovieInWatchlist,
       };
+    case MoviesActionType.UPDATE_IF_RATED:
+      return {
+        ...state,
+        isCurrentMovieRated: action.isCurrentMovieRated,
+        currentMovieRating: action.currentMovieRating,
+      };
     default:
       return {
         ...state,
@@ -125,7 +140,8 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const { sessionId, account } = useAuthContext();
-  const { watchlist, getWatchlist } = useAccountContext();
+  const { watchlist, ratedMovies, getWatchlist, getRatedMovies } =
+    useAccountContext();
 
   const setCurrentPage = (page: number) =>
     dispatch({
@@ -240,6 +256,9 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       console.log(response);
+
+      updateIfRated(rating);
+
       Toast.show(
         rating === 0
           ? "Your rating has been deleted"
@@ -297,11 +316,33 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const updateIfRated = (rating: number) => {
+    dispatch({
+      type: MoviesActionType.UPDATE_IF_RATED,
+      currentMovieId: state.currentMovieId,
+      isCurrentMovieInWatchlist: state.isCurrentMovieInWatchlist,
+      currentMovieRating: rating,
+      isCurrentMovieRated: rating !== 0,
+      trendingMovies: state.trendingMovies,
+      currentPage: state.currentPage,
+      movieDetails: state.movieDetails,
+      movieReviews: state.movieReviews,
+    });
+  };
+
   useEffect(() => {
     addToWatchList(
       watchlist.find((item) => item.id === state.currentMovieId) !== undefined
     );
   }, [state.currentMovieId, watchlist]);
+
+  useEffect(() => {
+    const ratedMovie = ratedMovies.find(
+      (item) => item.id === state.currentMovieId
+    );
+    const rating = ratedMovie?.rating;
+    updateIfRated(rating ?? 0);
+  }, [state.currentMovieId, ratedMovies]);
 
   const MoviesContextProviderValues = {
     trendingMovies: state.trendingMovies,
@@ -310,6 +351,8 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     movieReviews: state.movieReviews,
     currentMovieId: state.currentMovieId,
     isCurrentMovieInWatchlist: state.isCurrentMovieInWatchlist,
+    currentMovieRating: state.currentMovieRating,
+    isCurrentMovieRated: state.isCurrentMovieRated,
     getMovieDetails,
     setCurrentPage,
     getTrendingMovies,
@@ -317,6 +360,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     postRating,
     postToWatchList,
     addToWatchList,
+    updateIfRated,
   };
 
   return (

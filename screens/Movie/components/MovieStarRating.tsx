@@ -8,10 +8,17 @@ import { debounce } from "lodash";
 import { useMoviesContext } from "../../../global/context/moviesContext";
 import { colors } from "../../../global/colors";
 import { styles } from "../MovieDetailsScreen.style";
+import { useAccountContext } from "../../../global/context/accountContext";
 
 export function MovieStarRating({ movieId }: { movieId: number }) {
-  const { postRating } = useMoviesContext();
+  const {
+    postRating,
+    currentMovieId,
+    isCurrentMovieRated,
+    currentMovieRating,
+  } = useMoviesContext();
 
+  const { ratedMovies, getRatedMovies } = useAccountContext();
   const [ratingText, setRatingText] = useState<number>(0);
 
   const debouncedRating = debounce(postRating, 1500);
@@ -21,12 +28,34 @@ export function MovieStarRating({ movieId }: { movieId: number }) {
     debouncedRating(movieId, rating, rating === 0);
   }
 
+  /** FIXME: revise solution for re-checking/re-fetching of rated movies;
+   * advisable to use states and updates on moviesContext
+   */
+  useEffect(() => {
+    const fetchRatedMovies = async () => {
+      await getRatedMovies();
+    };
+
+    if (ratedMovies.length === 0) {
+      fetchRatedMovies();
+    } else {
+      /** Note: I know this is an expensive call -- for revision */
+      const interval = setInterval(function () {
+        fetchRatedMovies();
+      }, 1500);
+
+      return () => clearInterval(interval);
+    }
+  }, [isCurrentMovieRated, currentMovieRating, ratedMovies, currentMovieId]);
+
   return (
     <>
       <View style={styles.ratingView}>
         <Text style={styles.ratingTitle}>
           {`${
-            ratingText === 0 ? "Not Yet Rated" : `Your Rating: ${ratingText}/10`
+            currentMovieRating === 0
+              ? "Not Yet Rated"
+              : `Your Rating: ${currentMovieRating}/10`
           } `}
         </Text>
       </View>
@@ -44,7 +73,7 @@ export function MovieStarRating({ movieId }: { movieId: number }) {
         imageSize={30}
         jumpValue={0.5}
         fractions={1}
-        startingValue={ratingText}
+        startingValue={currentMovieRating}
         tintColor={colors.background}
       />
     </>
