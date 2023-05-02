@@ -50,7 +50,11 @@ function AppComponent() {
         />
       ) : (
         <>
-          <Stack.Screen name="LogIn" component={LoginScreen} />
+          <Stack.Screen
+            name="LogIn"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
         </>
       )}
