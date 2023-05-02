@@ -19,12 +19,6 @@ export function MovieStarRating({ movieId }: { movieId: number }) {
   function handleOnRatingComplete(rating: number) {
     setRatingText(rating);
     debouncedRating(movieId, rating, rating === 0);
-    Toast.show(
-      rating === 0
-        ? "Your rating has been deleted"
-        : "Your Rating has been posted",
-      Toast.CENTER
-    );
   }
 
   return (

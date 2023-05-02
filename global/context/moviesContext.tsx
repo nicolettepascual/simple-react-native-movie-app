@@ -1,9 +1,17 @@
-import { ReactNode, createContext, useContext, useReducer } from "react";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 import { request } from "../../api/api";
 import { endpoints } from "../../utils/endpoints";
 import { useAuthContext } from "./authContext";
 
 import Toast from "react-native-simple-toast";
+import { useAccountContext } from "./accountContext";
 
 enum MoviesActionType {
   GET_TRENDING = "GET_TRENDING",
@@ -22,6 +30,8 @@ type MoviesContextAction = {
   currentPage: number;
   movieDetails?: Movie;
   movieReviews?: Review[];
+  currentMovieId?: number;
+  isCurrentMovieInWatchlist?: boolean;
 };
 
 interface MoviesContextValues {
@@ -29,6 +39,8 @@ interface MoviesContextValues {
   currentPage: number;
   movieDetails?: Movie;
   movieReviews?: Review[];
+  currentMovieId?: number;
+  isCurrentMovieInWatchlist?: boolean;
 }
 
 interface MoviesContextState extends MoviesContextValues {
@@ -42,6 +54,7 @@ interface MoviesContextState extends MoviesContextValues {
     forDelete?: boolean
   ) => Promise<void>;
   postToWatchList: (movieId: number, watchlist: boolean) => Promise<void>;
+  addToWatchList: (status: boolean) => void;
 }
 
 const initialMoviesState = {
@@ -49,6 +62,8 @@ const initialMoviesState = {
   currentPage: 1,
   movieDetails: undefined,
   movieReviews: [],
+  currentMovieId: undefined,
+  isCurrentMovieInWatchlist: false,
   getTrendingMovies: async (page: number) => {},
   setCurrentPage: (page: number) => {},
   getMovieDetails: async (movieId: string) => {},
@@ -59,6 +74,7 @@ const initialMoviesState = {
     forDelete?: boolean
   ) => {},
   postToWatchList: async (movieId: number, watchlist: boolean) => {},
+  addToWatchList: (status: boolean) => {},
 };
 
 export const MoviesContext =
@@ -83,11 +99,17 @@ function MoviesContextReducer(
       return {
         ...state,
         movieDetails: action.movieDetails,
+        currentMovieId: action.currentMovieId,
       };
     case MoviesActionType.GET_MOVIE_REVIEWS:
       return {
         ...state,
         movieReviews: action.movieReviews,
+      };
+    case MoviesActionType.ADD_TO_WATCHLIST:
+      return {
+        ...state,
+        isCurrentMovieInWatchlist: action.isCurrentMovieInWatchlist,
       };
     default:
       return {
@@ -102,7 +124,8 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
     initialMoviesState
   );
 
-  const { sessionId, account, getAccountDetails } = useAuthContext();
+  const { sessionId, account } = useAuthContext();
+  const { watchlist, getWatchlist } = useAccountContext();
 
   const setCurrentPage = (page: number) =>
     dispatch({
@@ -158,6 +181,7 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
         trendingMovies: state.trendingMovies,
         currentPage: state.currentPage,
         movieDetails: movieDetails,
+        currentMovieId: Number(movieId),
       });
     } catch (e) {
       console.error(e);
@@ -210,58 +234,89 @@ const MoviesContextProvider = ({ children }: { children: ReactNode }) => {
         movieId: `${movieId}`,
         apiUrlWithSessionId: true,
         content: {
-          value: Number(rating),
+          value: rating,
         },
         method: forDelete ? "DELETE" : "POST",
       });
 
       console.log(response);
+      Toast.show(
+        rating === 0
+          ? "Your rating has been deleted"
+          : "Your Rating has been posted",
+        Toast.CENTER
+      );
       // TODO: Dispatch an action that handles the current movie has been rated
     } catch (e) {
       console.error(e);
     }
   };
 
-  const postToWatchList = async (movieId: number, watchlist: boolean) => {
-    try {
-      const accountId = account?.accountId;
+  const postToWatchList = useCallback(
+    async (movieId: number, watchlistStatus: boolean) => {
+      try {
+        const accountId = account?.accountId;
 
-      if (accountId) {
-        const response = await request({
-          url: endpoints.movies.addToWatchlist,
-          sessionId,
-          accountId: `${accountId}`,
-          movieId: `${movieId}`,
-          apiUrlWithSessionId: true,
-          content: {
-            media_type: "movie",
-            media_id: movieId,
-            watchlist,
-          },
-          method: "POST",
-        });
+        if (accountId) {
+          const response = await request({
+            url: endpoints.movies.addToWatchlist,
+            sessionId,
+            accountId: `${accountId}`,
+            movieId: `${movieId}`,
+            apiUrlWithSessionId: true,
+            content: {
+              media_type: "movie",
+              media_id: movieId,
+              watchlist: watchlistStatus,
+            },
+            method: "POST",
+          });
 
-        console.log(response);
-        Toast.show("Watchlist updated", Toast.CENTER);
+          console.log(response);
+          Toast.show("Watchlist updated", Toast.CENTER);
+        }
+
+        if (!watchlist) await getWatchlist();
+        // TODO: Dispatch an action that handles the current movie has been added/removed to watchlist
+        addToWatchList(watchlistStatus);
+      } catch (e) {
+        console.error(e);
       }
+    },
+    [watchlist]
+  );
 
-      // TODO: Dispatch an action that handles the current movie has been added/removed to watchlist
-    } catch (e) {
-      console.error(e);
-    }
+  const addToWatchList = (status: boolean) => {
+    dispatch({
+      type: MoviesActionType.ADD_TO_WATCHLIST,
+      isCurrentMovieInWatchlist: status,
+      trendingMovies: state.trendingMovies,
+      currentPage: state.currentPage,
+      movieDetails: state.movieDetails,
+      movieReviews: state.movieReviews,
+    });
   };
+
+  useEffect(() => {
+    addToWatchList(
+      watchlist.find((item) => item.id === state.currentMovieId) !== undefined
+    );
+  }, [state.currentMovieId, watchlist]);
 
   const MoviesContextProviderValues = {
     trendingMovies: state.trendingMovies,
     currentPage: state.currentPage,
     movieDetails: state.movieDetails,
     movieReviews: state.movieReviews,
+    currentMovieId: state.currentMovieId,
+    isCurrentMovieInWatchlist: state.isCurrentMovieInWatchlist,
     getMovieDetails,
     setCurrentPage,
     getTrendingMovies,
     getMovieReviews,
     postRating,
     postToWatchList,
+    addToWatchList,
   };
 
   return (

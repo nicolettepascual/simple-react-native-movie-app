@@ -3,12 +3,17 @@ import { useCallback, useEffect, useState } from "react";
 import { useMoviesContext } from "../../global/context/moviesContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { styles } from "./HomeScreen.styles";
-import { MovieDetailsScreen } from "../Movie/MovieDetailsScreen";
+import {
+  AddToWatchlistHeaderBtn,
+  MovieDetailsScreen,
+} from "../Movie/MovieDetailsScreen";
 import { Footer } from "./components/Footer";
 import { MoviePoster } from "./components/MoviePoster";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import Toast from "react-native-simple-toast";
+import { colors } from "../../global/colors";
+import { useAccountContext } from "../../global/context/accountContext";
 
 export type HomeStackParamList = {
   HomeScreen: undefined;
@@ -37,7 +42,7 @@ function HomeScreen() {
       <FlatList
         style={styles.flatList}
         data={trendingMovies}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => `${item.id.toString()}_${index}`}
         numColumns={2}
         onEndReached={onEndReached}
         ListFooterComponent={<Footer isLoading={isLoading} />}
@@ -50,7 +55,14 @@ function HomeScreen() {
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 export function HomeStackScreen() {
-  const { movieDetails, postToWatchList } = useMoviesContext();
+  const {
+    movieDetails,
+    currentMovieId,
+    isCurrentMovieInWatchlist,
+    postToWatchList,
+  } = useMoviesContext();
+
+  const { watchlist } = useAccountContext();
 
   return (
     <HomeStack.Navigator
@@ -58,7 +70,7 @@ export function HomeStackScreen() {
         headerShadowVisible: false,
         headerTintColor: "black",
         headerStyle: {
-          backgroundColor: "#efefef",
+          backgroundColor: colors.background,
         },
         headerTitleStyle: {
           fontWeight: "bold",
@@ -75,21 +87,7 @@ export function HomeStackScreen() {
         component={MovieDetailsScreen}
         options={({ route }) => ({
           title: route.params.movie.title,
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={async () => {
-                const movieId = movieDetails?.id;
-                if (movieId) postToWatchList(movieId, true);
-              }}
-              style={{ marginRight: 10 }}
-            >
-              <Ionicons
-                name="ios-heart-outline"
-                size={24}
-                color="deepskyblue"
-              />
-            </TouchableOpacity>
-          ),
+          headerRight: () => <AddToWatchlistHeaderBtn />,
         })}
       />
     </HomeStack.Navigator>

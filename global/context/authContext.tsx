@@ -128,6 +128,8 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
       const account = await getAccountDetails();
 
+      console.log("====== ", account);
+
       dispatch({
         type: AuthActionType.LOGIN,
         token: `${resForReqToken.request_token}`,

@@ -1,8 +1,12 @@
-import { View, Text, ActivityIndicator, FlatList } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useEffect, useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { RouteProp } from "@react-navigation/native";
-import { Rating } from "react-native-ratings";
-import Toast from "react-native-simple-toast";
 
 import { HomeStackParamList } from "../Home/HomeScreen";
 import { styles } from "./MovieDetailsScreen.style";
@@ -12,9 +16,8 @@ import { MovieBackdrop } from "./components/MovieBackdrop";
 import { MovieDetailsRow } from "./components/MovieDetailsRow";
 import { MovieSynopsis } from "./components/MovieSynopsis";
 import { MovieReviews } from "./components/MovieReviews";
-import { debounce } from "lodash";
-import { colors } from "../../global/colors";
 import { MovieStarRating } from "./components/MovieStarRating";
+import { useAccountContext } from "../../global/context/accountContext";
 
 type MovieDetailsScreenRouteProp = RouteProp<
   HomeStackParamList,
@@ -24,6 +27,39 @@ type MovieDetailsScreenRouteProp = RouteProp<
 type MovieDetailsProps = {
   route: MovieDetailsScreenRouteProp;
 };
+
+export function AddToWatchlistHeaderBtn() {
+  const { currentMovieId, isCurrentMovieInWatchlist, postToWatchList } =
+    useMoviesContext();
+
+  const { watchlist, getWatchlist } = useAccountContext();
+
+  useEffect(() => {
+    const fetchWatchlist = async () => {
+      await getWatchlist();
+    };
+
+    if (watchlist?.length === 0) fetchWatchlist();
+  }, [currentMovieId, watchlist]);
+
+  return (
+    <TouchableOpacity
+      onPress={async () => {
+        if (currentMovieId)
+          postToWatchList(currentMovieId, !isCurrentMovieInWatchlist);
+      }}
+      style={{ marginRight: 10 }}
+    >
+      <Ionicons
+        name={
+          isCurrentMovieInWatchlist ? "ios-heart-sharp" : "ios-heart-outline"
+        }
+        size={24}
+        color="deepskyblue"
+      />
+    </TouchableOpacity>
+  );
+}
 
 export function MovieDetailsScreen({ route }: MovieDetailsProps) {
   const { movie } = route.params;
@@ -35,16 +71,16 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
     { key: "rating" },
     { key: "reviews" },
   ];
+
   const {
     movieDetails,
     movieReviews,
+    currentMovieId,
     getMovieDetails,
     getMovieReviews,
-    postRating,
   } = useMoviesContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [ratingText, setRatingText] = useState<number>(0);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -54,7 +90,8 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
       });
     };
 
-    fetchDetails();
+    if (movie.id !== currentMovieId) fetchDetails();
+    else setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -65,9 +102,8 @@ export function MovieDetailsScreen({ route }: MovieDetailsProps) {
       });
     };
 
-    fetchReviews();
-
-    console.log(movieReviews?.length);
+    if (movie.id !== currentMovieId) fetchReviews();
+    else setIsLoading(false);
   }, []);
 
   return (

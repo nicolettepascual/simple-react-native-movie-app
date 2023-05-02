@@ -88,7 +88,7 @@ const AccountContextProvider = ({ children }: { children: ReactNode }) => {
         title: movie.title,
         vote_average: movie.vote_average,
         vote_count: movie.vote_count,
-        rating: movie.rating
+        rating: movie.rating,
       }));
 
       dispatch({
