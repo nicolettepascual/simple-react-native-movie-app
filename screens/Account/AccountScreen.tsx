@@ -86,21 +86,33 @@ function AccountScreen() {
 const AccountStack = createNativeStackNavigator();
 export function AccountStackScreen() {
   return (
-    <AccountStack.Navigator>
+    <AccountStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#efefef",
+        },
+        headerShadowVisible: false,
+        headerTransparent: true,
+        headerTintColor: "black",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
       <AccountStack.Screen
         name="AccountScreen"
         component={AccountScreen}
-        options={{ headerShown: false }}
+        options={{ title: "Account" }}
       />
       <AccountStack.Screen
         name="RatedMovies"
         component={RatedMovies}
-        options={{ headerShown: false }}
+        options={{ title: "Rated Movies" }}
       />
       <AccountStack.Screen
         name="Watchlist"
         component={Watchlist}
-        options={{ headerShown: false }}
+        options={{ title: "Watchlist" }}
       />
     </AccountStack.Navigator>
   );

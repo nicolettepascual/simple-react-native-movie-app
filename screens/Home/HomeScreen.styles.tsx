@@ -5,7 +5,6 @@ const { width, height } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
     width: width,
     height: height,
   },
@@ -13,8 +12,8 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   flatList: {
-    margin: 0,
     padding: 0,
+    margin: 0,
     width: width,
     height: height,
   },

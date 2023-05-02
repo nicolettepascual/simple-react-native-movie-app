@@ -53,11 +53,22 @@ export function HomeStackScreen() {
   const { movieDetails, postToWatchList } = useMoviesContext();
 
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator
+      screenOptions={{
+        headerShadowVisible: false,
+        headerTintColor: "black",
+        headerStyle: {
+          backgroundColor: "#efefef",
+        },
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
       <HomeStack.Screen
         name="HomeScreen"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{ title: "Trending" }}
       />
       <HomeStack.Screen
         name="MovieDetails"

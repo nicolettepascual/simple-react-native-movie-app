@@ -1,20 +1,10 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  SafeAreaView,
-} from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { globalStyles } from "../../global/styles";
 import { useSearchContext } from "../../global/context/searchContext";
-import { useEffect } from "react";
-import { endpoints } from "../../utils/endpoints";
-import { request } from "../../api/api";
 import SearchBar from "react-native-dynamic-search-bar";
 import { styles } from "./SearchScreen.style";
 import { debounce } from "lodash";
 import { MovieItemFlatList } from "../../global/components/MovieItemFlatList";
-import { RenderMovieItem } from "../../global/components/RenderMovieItem";
 
 export function SearchScreen() {
   const { searchResults, getSearchResults } = useSearchContext();
@@ -26,7 +16,7 @@ export function SearchScreen() {
   }
 
   return (
-    <SafeAreaView style={[globalStyles.container, styles.safeAreaView]}>
+    <View style={[globalStyles.container, styles.safeAreaView]}>
       <SearchBar
         placeholder="Search here"
         onChangeText={(text) => handleOnChangeText(text)}
@@ -35,6 +25,6 @@ export function SearchScreen() {
         movies={searchResults.slice(0, 5)}
         customStyle={[styles.flatList]}
       />
-    </SafeAreaView>
+    </View>
   );
 }

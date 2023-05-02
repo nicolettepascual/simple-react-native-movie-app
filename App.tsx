@@ -78,6 +78,9 @@ function TabNavigator() {
         },
         tabBarActiveTintColor: "deepskyblue",
         tabBarInactiveTintColor: "gray",
+        headerStyle: {
+          backgroundColor: "#efefef",
+        },
       })}
     >
       <Tab.Screen
@@ -88,7 +91,7 @@ function TabNavigator() {
       <Tab.Screen
         name="Search"
         component={SearchScreen}
-        options={{ headerShown: false }}
+        options={{ title: "Search" }}
       />
       <Tab.Screen
         name="Account"
