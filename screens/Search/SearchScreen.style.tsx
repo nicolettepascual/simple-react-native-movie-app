@@ -13,8 +13,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   flatList: {
-    margin: 0,
-    padding: 0,
     width: width,
     height: height,
   },

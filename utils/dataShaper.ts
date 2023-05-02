@@ -45,6 +45,7 @@ interface Movie {
     name: string;
   }[];
   runtime?: number;
+  rating?: number;
 }
 
 interface MoviesApiResponse extends BaseApiResponse {

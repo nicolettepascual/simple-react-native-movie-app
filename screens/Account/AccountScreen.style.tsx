@@ -12,8 +12,23 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginTop: 20,
-    marginLeft: 20,
+    marginLeft: 15,
     marginBottom: 10,
+  },
+  poster: {
+    margin: 5,
+    marginRight: 10,
+    flex: 1,
+    justifyContent: "center",
+    aspectRatio: 9 / 16,
+  },
+  movieItemView: {
+    // borderWidth: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  movieItemTitle: {
+    fontWeight: "bold",
   },
   accountAvatar: {
     width: width * 0.2,

@@ -3,6 +3,8 @@ import { styles } from "../AccountScreen.style";
 import { globalStyles, paddingStyles } from "../../../global/styles";
 import { useAccountContext } from "../../../global/context/accountContext";
 import { useEffect } from "react";
+import { RenderMovieItem } from "../../../global/components/RenderMovieItem";
+import { MovieItemFlatList } from "../../../global/components/MovieItemFlatList";
 
 export function Watchlist() {
   const { watchlist, getWatchlist } = useAccountContext();
@@ -14,15 +16,16 @@ export function Watchlist() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Watchlist</Text>
-      <FlatList
+      <MovieItemFlatList movies={watchlist} />
+      {/* <FlatList
         // style={styles.flatList}
         data={watchlist}
         keyExtractor={(item) => item.id.toString()}
         // onEndReached={onEndReached}
         // ListFooterComponent={<Footer isLoading={isLoading} />}
         removeClippedSubviews={true}
-        renderItem={({ item }) => <Text>{item.original_title}</Text>}
-      />
+        renderItem={({ item }) => <RenderMovieItem movie={item} />}
+      /> */}
     </SafeAreaView>
   );
 }

@@ -13,6 +13,8 @@ import { request } from "../../api/api";
 import SearchBar from "react-native-dynamic-search-bar";
 import { styles } from "./SearchScreen.style";
 import { debounce } from "lodash";
+import { MovieItemFlatList } from "../../global/components/MovieItemFlatList";
+import { RenderMovieItem } from "../../global/components/RenderMovieItem";
 
 export function SearchScreen() {
   const { searchResults, getSearchResults } = useSearchContext();
@@ -29,14 +31,9 @@ export function SearchScreen() {
         placeholder="Search here"
         onChangeText={(text) => handleOnChangeText(text)}
       />
-      <FlatList
-        // style={styles.flatList}
-        data={searchResults}
-        keyExtractor={(item) => item.id.toString()}
-        // onEndReached={onEndReached}
-        // ListFooterComponent={<Footer isLoading={isLoading} />}
-        removeClippedSubviews={true}
-        renderItem={({ item }) => <Text>{item.title}</Text>}
+      <MovieItemFlatList
+        movies={searchResults.slice(0, 5)}
+        customStyle={[styles.flatList]}
       />
     </SafeAreaView>
   );
